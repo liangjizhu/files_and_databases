@@ -7,7 +7,7 @@ DROP TABLE purchase_order;
 DROP TABLE billing_data;
 DROP TABLE credit_card_data;
 DROP TABLE delivery;
-DROP TABLE delivery_data;
+DROP TABLE orders_item;
 DROP TABLE customers;
 DROP TABLE registered;
 DROP TABLE non_registered;
@@ -79,13 +79,42 @@ CREATE TABLE purchase_order(
     order_id VARCHAR(20);
     product_id VARCHAR(50);
     purchase_date DATE NOT NULL;
-    delivery_data VARCHAR(50);
-    quantity INT CHECK(quantity >= 1);
+    delivery_data VARCHAR(50);    
+);
+CREATE TABLE billing_data(
+    customer_id INT CHECK(customer_id >= 0);
+    -- if bill_type == credit card -> credit_card_data
+    bill_type VARCHAR(20);
+    payment_date DATE NOT NULL;
+    
+);
+
+CREATE TABLE credit_card_data(
+    customer_id INT CHECK(customer_id >= 0);
+    cardholder VARCHAR(50);
+    finance_company VARCHAR(30);
+    card_number INT CHECK(9999999999999999 > credit_card_data >= 1000000000000000)
+);
+
+CREATE TABLE delivery(
+    customer_id INT CHECK(customer_id >= 0);
+    order_date DATE NOT NULL;
+    delivery_address VARCHAR(100);
+);
+
+CREATE TABLE orders_item(
+    order_id VARCHAR(20);
+    product_id VARCHAR(50);
+    quantity INT CHECK(quantity > 0);
+    unit_price FLOAT CHECK(unit_price > 0);
+    total_price FLOAT;
     
 );
 
 CREATE TABLE customers(
     customer_id INT CHECK(customer_id >= 0);
 
-)
+);
+
+
 
