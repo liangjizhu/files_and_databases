@@ -3,12 +3,12 @@ DROP TABLE products;
 DROP TABLE p_reference;
 DROP TABLE replacement_order;
 DROP TABLE supplier;
-DROP TABLE supply_line;
 DROP TABLE purchase_order;
 DROP TABLE billing_data;
 DROP TABLE credit_card_data;
 DROP TABLE delivery;
 DROP TABLE delivery_data;
+DROP TABLE customers;
 DROP TABLE registered;
 DROP TABLE non_registered;
 DROP TABLE client_feedback;
@@ -72,6 +72,20 @@ CREATE TABLE supplier(
     offer FLOAT CHECK(offer > 0);
     fulfilled_orders INT CHECK(fulfilled_orders >= 0);
     CONSTRAINT pk_supplier PRIMARY KEY(provider_name, cif);
+
+);
+
+CREATE TABLE purchase_order(
+    order_id VARCHAR(20);
+    product_id VARCHAR(50);
+    purchase_date DATE NOT NULL;
+    delivery_data VARCHAR(50);
+    quantity INT CHECK(quantity >= 1);
+    
+);
+
+CREATE TABLE customers(
+    customer_id INT CHECK(customer_id >= 0);
 
 )
 
