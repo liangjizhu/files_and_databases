@@ -39,7 +39,7 @@ CREATE TABLE p_reference{
     bar_code VARCHAR(15),
     packaging VARCHAR(15),
     retail_price VARCHAR(14),
-    min_stock INT CHECK (min_stock >= 0),
+    min_stock INT CHECK (min_stock >= 5),
     max_stock INT CHECK (max_stock >= min_stock),
     current_stock INT CHECK (max_stock >= current_stock >= min_stock),
     CONSTRAINT pk_p_reference PRIMARY KEY(bar_code),
@@ -48,10 +48,16 @@ CREATE TABLE p_reference{
 
 CREATE TABLE replacement_order{
     p_reference VARCHAR(15);
+    replacement_order_id VARCHAR(15);
     supplier VARCHAR(35);
     request_amount VARCHAR(2);
     request_date DATE NOT NULL;
     delivery_date DATE NOT NULL;
+    state VARCHAR(15);
+    received_date DATE NOT NULL;
+    payment VARCHAR(20);
+    CONSTRAINT pk_replacement_order PRIMARY KEY(p_reference);
+    CONSTRAINT fk_replacement_order_p_reference FOREIGN KEY(p_reference) REFERENCES p_reference(bar_code);
 
 }
 
