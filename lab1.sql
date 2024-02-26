@@ -15,12 +15,12 @@ DROP TABLE client_feedback;
 DROP TABLE comments;
 
 
-CREATE TABLE catalogue{
+CREATE TABLE catalogue (
     product VARCHAR(50) NOT NULL,
     CONSTRAINT pk_catalogue PRIMARY KEY(product)
-};
+);
 
-CREATE TABLE products{
+CREATE TABLE products(
     -- product_id == name
     product_id VARCHAR(50) NOT NULL,
     coffea VARCHAR(20),
@@ -33,9 +33,9 @@ CREATE TABLE products{
     p_reference VARCHAR(15),
     CONSTRAINT pk_products PRIMARY KEY(product_id, p_reference),
     CONSTRAINT fk_products_catalogue FOREIGN KEY(product_id) REFERENCES catalogue(product)
-};
+);
 
-CREATE TABLE p_reference{
+CREATE TABLE p_reference(
     bar_code VARCHAR(15),
     packaging VARCHAR(15),
     retail_price VARCHAR(14),
@@ -44,10 +44,11 @@ CREATE TABLE p_reference{
     current_stock INT CHECK (max_stock >= current_stock >= min_stock),
     CONSTRAINT pk_p_reference PRIMARY KEY(bar_code),
     CONSTRAINT fk_p_reference_products FOREIGN KEY(bar_code) REFERENCE products(p_reference)
-};
+);
 
-CREATE TABLE replacement_order{
+CREATE TABLE replacement_order(
     p_reference VARCHAR(15);
+    -- needed??
     replacement_order_id VARCHAR(15);
     supplier VARCHAR(35);
     request_amount VARCHAR(2);
@@ -56,9 +57,21 @@ CREATE TABLE replacement_order{
     state VARCHAR(15);
     received_date DATE NOT NULL;
     payment VARCHAR(20);
-    CONSTRAINT pk_replacement_order PRIMARY KEY(p_reference);
+    CONSTRAINT pk_replacement_order PRIMARY KEY(p_reference, replacement_order_id);
     CONSTRAINT fk_replacement_order_p_reference FOREIGN KEY(p_reference) REFERENCES p_reference(bar_code);
 
-}
+);
 
+CREATE TABLE supplier(
+    provider_name VARCHAR(50) NOT NULL;
+    cif VARCHAR(10) NOT NULL;
+    full_name VARCHAR(100) NOT NULL;
+    email VARCHAR(100) NOT NULL;
+    phone_number INT CHECK(999999999 > phone_number >= 100000000);
+    comm_address VARCHAR(100) NOT NULL;
+    offer FLOAT CHECK(offer > 0);
+    fulfilled_orders INT CHECK(fulfilled_orders >= 0);
+    CONSTRAINT pk_supplier PRIMARY KEY(provider_name, cif);
+
+)
 
