@@ -12,8 +12,8 @@ DROP TABLE orders_item;
 DROP TABLE customers;
 DROP TABLE registered;
 DROP TABLE non_registered;
-DROP TABLE customer_feedback;
-DROP TABLE comments;
+DROP TABLE customer_feedbacks;
+DROP TABLE customer_comments;
 
 -- START "MY SHOP"
 CREATE TABLE catalogue (
