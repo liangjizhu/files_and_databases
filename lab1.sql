@@ -180,7 +180,7 @@ CREATE TABLE credit_card_data(
     billing_id VARCHAR(30) NOT NULL,
     cardholder VARCHAR(50) NOT NULL,
     finance_company VARCHAR(30) NOT NULL,
-    card_number INT CHECK(credit_card_data >= 1000000000000000),
+    card_number INT CHECK(card_number >= 1000000000000000),
     expiration_date DATE NOT NULL,
     CONSTRAINT pk_credit_card_data PRIMARY KEY(credit_card_data_id),
     CONSTRAINT fk_credit_card_data_billing_data FOREIGN KEY(billing_id) REFERENCES billing_data(billing_id),
