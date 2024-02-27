@@ -93,13 +93,19 @@ CREATE TABLE purchase_order(
     order_id VARCHAR(20),
     product_id VARCHAR(50),
     purchase_date DATE NOT NULL,
-    delivery_data VARCHAR(50),    
+    delivery_data VARCHAR(50),   
+    CONSTRAINT pk_purchase_order PRIMARY KEY(order_id),
+    CONSTRAINT fk_purchase_order_products FOREIGN KEY(product_id) REFERENCES products(product_id)
 );
 
 CREATE TABLE delivery(
-    customer_id INT CHECK(customer_id >= 0),
+    delivery_id VARCHAR(30) NOT NULL,
+    order_id VARCHAR(20) NOT NULL,
     order_date DATE NOT NULL,
     delivery_address VARCHAR(100),
+    CONSTRAINT pk_delivery PRIMARY KEY(delivery_id),
+    CONSTRAINT fk_delivery_purchase_order FOREIGN KEY(order_id) REFERENCES purchase_order(order_id)
+
 );
 
 CREATE TABLE orders_item(
