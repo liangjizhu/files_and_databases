@@ -49,6 +49,9 @@ CREATE TABLE p_reference(
     product_id VARCHAR(50) NOT NULL,
     packaging VARCHAR(15),
     retail_price VARCHAR(14),
+    -- By default the min_stock should be 5. How????
+    -- When the min_stock is less than 5 it should place a replacement order automatically
+    -- The requested units have to be max_stock - current_stock
     min_stock INT CHECK (min_stock >= 5),
     max_stock INT NOT NULL,
     current_stock INT NOT NULL,
@@ -63,10 +66,12 @@ CREATE TABLE replacement_order(
     replacement_order_id VARCHAR(15) NOT NULL,
     bar_code VARCHAR(15) NOT NULL,
     supplier VARCHAR(35),
+    -- The requested units have to be max_stock - current_stock
     request_amount VARCHAR(2),
+    -- This has to be updated once the delivery has arrived
     request_date DATE NOT NULL,
     delivery_date DATE NOT NULL,
-    state VARCHAR(15),
+    rorder_state VARCHAR(15),
     received_date DATE NOT NULL,
     payment VARCHAR(20),
     CONSTRAINT pk_replacement_order PRIMARY KEY(replacement_order_id),
