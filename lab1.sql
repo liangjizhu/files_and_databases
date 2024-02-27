@@ -170,7 +170,7 @@ CREATE TABLE billing_data(
     -- if bill_type == credit card -> credit_card_data
     bill_type VARCHAR(20),
     payment_date DATE NOT NULL,
-    credit_card_data BOOL,
+    credit_card_data char(1),
     CONSTRAINT pk_billing_data PRIMARY KEY(billing_id),
     CONSTRAINT fk_billing_data_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id)
 );
