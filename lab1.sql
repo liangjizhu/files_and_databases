@@ -144,12 +144,8 @@ CREATE TABLE purchase_order(
     product_id VARCHAR(50),
     customer_id INT CHECK(customer_id >= 0) NOT NULL,
     purchase_date DATE NOT NULL,
-<<<<<<< HEAD
-    -- If orders from same customer to same address > 1, create delivery
-=======
     -- Charge credit card the same day as the order ("charges to credit cards are always placed on the order’s date")
      -- If orders from same customer to same address > 1, create delivery
->>>>>>> origin/addedcomments
     delivery_data VARCHAR(50),   
     CONSTRAINT pk_purchase_order PRIMARY KEY(order_id),
     CONSTRAINT fk_purchase_order_products FOREIGN KEY(product_id) REFERENCES products(product_id),
@@ -168,11 +164,7 @@ CREATE TABLE delivery(
 CREATE TABLE orders_item(
     order_id VARCHAR(20) NOT NULL,
     product_id VARCHAR(50) NOT NULL,
-<<<<<<< HEAD
     -- Check that quantity < Stock (if quantity > stock, quantity = max_stock + display message to user)
-=======
-     -- Check that quantity < Stock (if quantity > stock, quantity = max_stock + display message to user)
->>>>>>> origin/addedcomments
     quantity INT CHECK(quantity > 0) NOT NULL,
     unit_price FLOAT CHECK(unit_price > 0) NOT NULL,
     total_price FLOAT NOT NULL,
