@@ -86,13 +86,39 @@ CREATE TABLE supplier(
     supplier_email VARCHAR(100) NOT NULL,
     supplier_phone_number INT CHECK(supplier_phone_number >= 100000000),
     comm_address VARCHAR(100) NOT NULL,
-    offer FLOAT CHECK(offer > 0),
+    offer VARCHAR(15) NOT NULL,
     fulfilled_orders VARCHAR(15) NOT NULL,
     CONSTRAINT pk_supplier PRIMARY KEY(cif),
     CONSTRAINT fk_supplier_replacement_order FOREIGN KEY(bar_code) REFERENCES p_reference(bar_code),
     CONSTRAINT check_supplier_phone_number CHECK(999999999 > supplier_phone_number),
-    CONSTRAINT fk_fullfilled_orders FOREIGN KEY(fulfilled_orders) REFERENCES replacement_order(replacement_order_id)
+    CONSTRAINT fk_fullfilled_orders FOREIGN KEY(fullfilled_orders) REFERENCES replacement_order(replacement_order_id),
+    CONSTRAINT fk_offer FOREIGN KEY(offer) REFERENCES replacement_order(replacement_order_id),
 );
+
+CREATE TRIGGER trg_orders(
+BEFORE INSERT ON replacement_order
+FOR EACH ROW
+BEGIN
+    DECLARE supplier_cif VARCHAR(10);
+
+    BEGIN
+
+    -- Retrieve the CIF of the supplier associated with the replacement order
+    SELECT cif INTO supplier_cif FROM supplier WHERE cif = NEW.supplier;
+
+    -- Check if the supplier exists
+    IF supplier_cif IS NOT NULL AND NEW.rorder_state = 'fulfilled' THEN
+        -- Update the fulfilled_orders column for the corresponding supplier
+        UPDATE supplier
+        SET fulfilled_orders = CONCAT_WS(',', fulfilled_orders, NEW.replacement_order_id),
+        WHERE cif = supplier_cif;
+    IF supplier_cif is NOT NULL AND NEW.rorder_state = 'non-fulfilled' THEN
+        UPDATE supplier
+        SET offer = CONCAT_WS(',', offer, NEW.offer),
+        WHERE cif = supplier_cif;
+    END;
+);
+
 -- END "MY SHOP"
 
 -- START "BUYING"
@@ -161,6 +187,7 @@ CREATE TABLE non_registered(
     non_reg_surname VARCHAR(30) NOT NULL,
     CONSTRAINT pk_non_registered PRIMARY KEY(non_registered_id),
     CONSTRAINT fk_non_registered_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id)
+
 );
 
 CREATE TABLE billing_data(
@@ -169,7 +196,7 @@ CREATE TABLE billing_data(
     -- if bill_type == credit card -> credit_card_data
     bill_type VARCHAR(20),
     payment_date DATE NOT NULL,
-    credit_card_data char(1),
+    credit_card_data BOOL,
     CONSTRAINT pk_billing_data PRIMARY KEY(billing_id),
     CONSTRAINT fk_billing_data_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id)
 );
@@ -179,7 +206,7 @@ CREATE TABLE credit_card_data(
     billing_id VARCHAR(30) NOT NULL,
     cardholder VARCHAR(50) NOT NULL,
     finance_company VARCHAR(30) NOT NULL,
-    card_number INT CHECK(card_number >= 1000000000000000),
+    card_number INT CHECK(credit_card_data >= 1000000000000000),
     expiration_date DATE NOT NULL,
     CONSTRAINT pk_credit_card_data PRIMARY KEY(credit_card_data_id),
     CONSTRAINT fk_credit_card_data_billing_data FOREIGN KEY(billing_id) REFERENCES billing_data(billing_id),
