@@ -101,8 +101,6 @@ FOR EACH ROW
 BEGIN
     DECLARE supplier_cif VARCHAR(10);
 
-    BEGIN
-
     -- Retrieve the CIF of the supplier associated with the replacement order
     SELECT cif INTO supplier_cif FROM supplier WHERE cif = NEW.supplier;
 
@@ -116,7 +114,7 @@ BEGIN
         UPDATE supplier
         SET offer = CONCAT_WS(',', offer, NEW.offer),
         WHERE cif = supplier_cif;
-    END;
+END;
 );
 
 -- END "MY SHOP"
