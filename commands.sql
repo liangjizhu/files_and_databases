@@ -2,6 +2,12 @@ show wrap;
 set linesize 2000;
 alter session set nls_language = 'English';
 select * from all_tables;
+select * from fsdb.catalogue;
+select * from fsdb.trolley;
+select * from fsdb.posts;
+
+select PROV_PERSON    from fsdb.catalogue;
+
 
 desc catalogue;
 desc products;
