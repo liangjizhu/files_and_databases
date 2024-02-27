@@ -132,6 +132,7 @@ CREATE TABLE orders_item(
 );
 
 CREATE TABLE registered(
+    registered_id VARCHAR(30) NOT NULL,
     customer_id INT CHECK(customer_id >= 0) NOT NULL,
     reg_username VARCHAR(30) NOT NULL,
     reg_password VARCHAR(40) NOT NULL,
@@ -140,50 +141,67 @@ CREATE TABLE registered(
     reg_surname_1 VARCHAR(30) NOT NULL,    
     reg_surname_2 VARCHAR(30),
     contact_preference VARCHAR(30) NOT NULL,
-    loyalty_discount BOOL,
+    loyalty_discount CHAR(1),
     order_id VARCHAR(20) NOT NULL,
+    CONSTRAINT pk_registered PRIMARY KEY(registered_id),
+    CONSTRAINT fk_registered_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id)
 );
 
 CREATE TABLE non_registered(
+    non_registered_id VARCHAR(30) NOT NULL,
+    customer_id INT CHECK(customer_id >= 0) NOT NULL,
     order_id VARCHAR(20) NOT NULL,
     non_reg_name VARCHAR(30) NOT NULL,
     non_reg_surname VARCHAR(30) NOT NULL,
+    CONSTRAINT pk_non_registered PRIMARY KEY(non_registered_id),
+    CONSTRAINT fk_non_registered_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id)
+
 );
 
 CREATE TABLE billing_data(
+    billing_id VARCHAR(30) NOT NULL,
     customer_id INT CHECK(customer_id >= 0) NOT NULL,
     -- if bill_type == credit card -> credit_card_data
     bill_type VARCHAR(20),
     payment_date DATE NOT NULL,
     credit_card_data BOOL,
+    CONSTRAINT pk_billing_data PRIMARY KEY(billing_id),
+    CONSTRAINT fk_billing_data_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id)
 );
 
 CREATE TABLE credit_card_data(
-    customer_id INT CHECK(customer_id >= 0) NOT NULL,
+    credit_card_data_id VARCHAR(30) NOT NULL,
+    billing_id VARCHAR(30) NOT NULL,
     cardholder VARCHAR(50) NOT NULL,
     finance_company VARCHAR(30) NOT NULL,
     card_number INT CHECK(9999999999999999 > credit_card_data >= 1000000000000000),
     expiration_date DATE NOT NULL,
+    CONSTRAINT pk_credit_card_data PRIMARY KEY(credit_card_data_id),
+    CONSTRAINT fk_credit_card_data_billing_data FOREIGN KEY(billing_id) REFERENCES billing_data(billing_id)
 );
 -- END "BUYING"
 
 -- START "RATING"
 CREATE TABLE customer_feedbacks(
+    feedback_id VARCHAR(30) NOT NULL,
     customer_id INT CHECK(customer_id >= 0) NOT NULL,
     product_id VARCHAR(50),
     bar_code VARCHAR(15),
     opinion VARCHAR(1000),
     rating INT CHECK(5 >= rating > 0),
     customer_comment VARCHAR(1000),
-
-    
+    CONSTRAINT pk_customer_feedbacks PRIMARY KEY(feedback_id),
+    CONSTRAINT fk_customer_feedbacks_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id)
 );
 
 CREATE TABLE customer_comments(
     comment_id VARCHAR(255) NOT NULL,
+    customer_id INT CHECK(customer_id >= 0) NOT NULL,
     score INT CHECK(10 >= rating > 0),
     text VARCHAR(1000),
     likes INT CHECK(likes >= 0),
     tag VARCHAR(40),
+    CONSTRAINT pk_customer_comments PRIMARY KEY(comment_id),
+    CONSTRAINT fk_customer_comments_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id)
 );
 -- END "RATING"
