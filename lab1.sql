@@ -91,7 +91,7 @@ CREATE TABLE supplier(
     CONSTRAINT pk_supplier PRIMARY KEY(cif),
     CONSTRAINT fk_supplier_replacement_order FOREIGN KEY(bar_code) REFERENCES p_reference(bar_code),
     CONSTRAINT check_supplier_phone_number CHECK(999999999 > supplier_phone_number),
-    CONSTRAINT fk_fullfilled_orders FOREIGN KEY(fullfilled_orders) REFERENCES replacement_order(replacement_order_id)
+    CONSTRAINT fk_fullfilled_orders FOREIGN KEY(fulfilled_orders) REFERENCES replacement_order(replacement_order_id)
 );
 -- END "MY SHOP"
 
