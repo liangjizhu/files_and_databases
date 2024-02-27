@@ -56,9 +56,7 @@ CREATE TABLE p_reference(
 );
 
 CREATE TABLE replacement_order(
-    p_reference VARCHAR(15),
-    -- needed??
-    replacement_order_id VARCHAR(15),
+    replacement_order_id VARCHAR(15) NOT NULL,
     supplier VARCHAR(35),
     request_amount VARCHAR(2),
     request_date DATE NOT NULL,
@@ -66,8 +64,8 @@ CREATE TABLE replacement_order(
     state VARCHAR(15),
     received_date DATE NOT NULL,
     payment VARCHAR(20),
-    CONSTRAINT pk_replacement_order PRIMARY KEY(p_reference, replacement_order_id),
-    CONSTRAINT fk_replacement_order_p_reference FOREIGN KEY(p_reference) REFERENCES p_reference(bar_code),
+    CONSTRAINT pk_replacement_order PRIMARY KEY(replacement_order_id),
+    CONSTRAINT fk_replacement_order_p_reference FOREIGN KEY(replacement_order_id) REFERENCES p_reference(bar_code),
 
 );
 
