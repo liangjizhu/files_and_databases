@@ -32,7 +32,8 @@ CREATE TABLE products(
     -- if NULL -> delete product
     p_reference VARCHAR(15) NOT NULL,
     CONSTRAINT pk_products PRIMARY KEY(product_id),
-    CONSTRAINT fk_products_catalogue FOREIGN KEY(product_id) REFERENCES catalogue(product)
+    CONSTRAINT fk_products_catalogue FOREIGN KEY(product_id) REFERENCES catalogue(product),
+    CONSTRAINT check_roast_type CHECK(roast_type IN ('natural', 'high-roast', 'mixture')
 );
 
 CREATE TABLE marketing_format(
@@ -41,7 +42,8 @@ CREATE TABLE marketing_format(
     product_format VARCHAR(20) NOT NULL,
     packaging VARCHAR(15) NOT NULL,
     CONSTRAINT pk_marketing_format PRIMARY KEY(format_id),
-    CONSTRAINT fk_marketing_format_products FOREIGN KEY(product_id) REFERENCES products(product_id)
+    CONSTRAINT fk_marketing_format_products FOREIGN KEY(product_id) REFERENCES products(product_id),
+    CONSTRAINT check_format_id CHECK(format_id IN ('raw grain', 'roasted beans', 'freeze-dried', 'in capsules', 'prepared')
 );
 
 CREATE TABLE p_reference(    
@@ -52,9 +54,9 @@ CREATE TABLE p_reference(
     -- By default the min_stock should be 5. How????
     -- When the min_stock is less than 5 it should place a replacement order automatically
     -- The requested units have to be max_stock - current_stock
-    min_stock INT CHECK (min_stock >= 5),
+    min_stock INT DEFAULT 5 CHECK (min_stock >= 5),
     max_stock INT NOT NULL,
-    current_stock INT NOT NULL,
+    current_stock INT DEFAULT 0 NOT NULL,
     CONSTRAINT pk_p_reference PRIMARY KEY(bar_code),
     CONSTRAINT fk_p_reference_products FOREIGN KEY(product_id) REFERENCES products(product_id),
     CONSTRAINT check_current_stock_1 CHECK(current_stock >= min_stock),
@@ -75,7 +77,8 @@ CREATE TABLE replacement_order(
     received_date DATE NOT NULL,
     payment VARCHAR(20),
     CONSTRAINT pk_replacement_order PRIMARY KEY(replacement_order_id),
-    CONSTRAINT fk_replacement_order_p_reference FOREIGN KEY(bar_code) REFERENCES p_reference(bar_code)
+    CONSTRAINT fk_replacement_order_p_reference FOREIGN KEY(bar_code) REFERENCES p_reference(bar_code),
+    CONSTRAINT check_rorder_state CHECK(rorder_state IN ('fulfilled', 'draft', 'placed')
 );
 
 CREATE TABLE supplier(
@@ -87,12 +90,15 @@ CREATE TABLE supplier(
     supplier_phone_number INT CHECK(supplier_phone_number >= 100000000),
     comm_address VARCHAR(100) NOT NULL,
     offer VARCHAR(15) NOT NULL,
-    fulfilled_orders VARCHAR(15) NOT NULL,
+    fulfilled_orders VARCHAR(15),
     CONSTRAINT pk_supplier PRIMARY KEY(cif),
     CONSTRAINT fk_supplier_replacement_order FOREIGN KEY(bar_code) REFERENCES p_reference(bar_code),
     CONSTRAINT check_supplier_phone_number CHECK(999999999 > supplier_phone_number),
-    CONSTRAINT fk_fullfilled_orders FOREIGN KEY(fullfilled_orders) REFERENCES replacement_order(replacement_order_id),
-    CONSTRAINT fk_offer FOREIGN KEY(offer) REFERENCES replacement_order(replacement_order_id),
+    not the already fulfilled orders to them (which will be kept without a value for provider). 
+    -- not the already fulfilled orders to them (which will be kept without a value for provider). 
+    CONSTRAINT fk_fullfilled_orders FOREIGN KEY(fullfilled_orders) REFERENCES replacement_order(replacement_order_id) ON DELETE SET NULL,
+    -- If the provider is removed from the base, so will be all their supply lines (offers)
+    CONSTRAINT fk_offer FOREIGN KEY(offer) REFERENCES replacement_order(replacement_order_id) ON DELETE CASCADE,
 );
 
 CREATE TRIGGER trg_orders(
@@ -110,7 +116,7 @@ BEGIN
         UPDATE supplier
         SET fulfilled_orders = CONCAT_WS(',', fulfilled_orders, NEW.replacement_order_id),
         WHERE cif = supplier_cif;
-    IF supplier_cif is NOT NULL AND NEW.rorder_state = 'non-fulfilled' THEN
+    IF supplier_cif is NOT NULL AND (NEW.rorder_state = 'draft' OR NEW.rorder_state = 'placed' )THEN
         UPDATE supplier
         SET offer = CONCAT_WS(',', offer, NEW.offer),
         WHERE cif = supplier_cif;
@@ -170,11 +176,12 @@ CREATE TABLE registered(
     reg_name VARCHAR(30) NOT NULL,
     reg_surname_1 VARCHAR(30) NOT NULL,    
     reg_surname_2 VARCHAR(30),
-    contact_preference VARCHAR(30) NOT NULL,
+    contact_preference VARCHAR(30) DEFAULT 'sms' NOT NULL,
     loyalty_discount CHAR(1),
     order_id VARCHAR(20) NOT NULL,
     CONSTRAINT pk_registered PRIMARY KEY(registered_id),
-    CONSTRAINT fk_registered_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id)
+    CONSTRAINT fk_registered_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id),
+    CONSTRAINT fk_order FOREIGN KEY(order_id) REFERENCES purchase_order(order_id) ON DELETE SET 'anonymous'
 );
 
 CREATE TABLE non_registered(
@@ -229,9 +236,9 @@ CREATE TABLE customer_feedbacks(
 CREATE TABLE customer_comments(
     comment_id VARCHAR(255) NOT NULL,
     customer_id INT CHECK(customer_id >= 0) NOT NULL,
-    score INT CHECK(score > 0),
+    score INT CHECK(score > 0) AND CHECK (score < 6),
     text VARCHAR(1000),
-    likes INT CHECK(likes >= 0),
+    likes INT DEFAULT 0 CHECK(likes >= 0),
     tag VARCHAR(40),
     CONSTRAINT pk_customer_comments PRIMARY KEY(comment_id),
     CONSTRAINT fk_customer_comments_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id),
