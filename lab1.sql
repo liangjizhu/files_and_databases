@@ -15,7 +15,7 @@ DROP TABLE non_registered;
 DROP TABLE customer_feedback;
 DROP TABLE comments;
 
-
+-- START "MY SHOP"
 CREATE TABLE catalogue (
     product VARCHAR(50) NOT NULL,
     CONSTRAINT pk_catalogue PRIMARY KEY(product)
@@ -35,28 +35,32 @@ CREATE TABLE products(
     CONSTRAINT fk_products_catalogue FOREIGN KEY(product_id) REFERENCES catalogue(product)
 );
 
-CREATE TABLE marketingFormat(
+CREATE TABLE marketing_format(
+    format_id VARCHAR(50) NOT NULL, 
+    product_id VARCHAR(50) NOT NULL,
     product_format VARCHAR(20) NOT NULL,
     packaging VARCHAR(15) NOT NULL,
-    CONSTRAINT pk_marketingFormat PRIMARY KEY(product_format),
-    CONSTRAINT fk_marketingFormat_products FOREIGN KEY(product_format) REFERENCES products(product_id)
+    CONSTRAINT pk_marketing_format PRIMARY KEY(format_id),
+    CONSTRAINT fk_marketing_format_products FOREIGN KEY(product_id) REFERENCES products(product_id)
 );
 
-CREATE TABLE p_reference(
+CREATE TABLE p_reference(    
     bar_code VARCHAR(15) NOT NULL,
+    product_id VARCHAR(50) NOT NULL,
     packaging VARCHAR(15),
     retail_price VARCHAR(14),
     min_stock INT CHECK (min_stock >= 5),
     max_stock INT NOT NULL,
     current_stock INT NOT NULL,
     CONSTRAINT pk_p_reference PRIMARY KEY(bar_code),
-    CONSTRAINT fk_p_reference_products FOREIGN KEY(bar_code) REFERENCES products(product_id),
+    CONSTRAINT fk_p_reference_products FOREIGN KEY(product_id) REFERENCES products(product_id),
     CONSTRAINT check_current_stock CHECK(current_stock >= min_stock),
     CONSTRAINT check_max_stock CHECK(max_stock >= min_stock)
 );
 
 CREATE TABLE replacement_order(
     replacement_order_id VARCHAR(15) NOT NULL,
+    bar_code VARCHAR(15) NOT NULL,
     supplier VARCHAR(35),
     request_amount VARCHAR(2),
     request_date DATE NOT NULL,
@@ -65,23 +69,26 @@ CREATE TABLE replacement_order(
     received_date DATE NOT NULL,
     payment VARCHAR(20),
     CONSTRAINT pk_replacement_order PRIMARY KEY(replacement_order_id),
-    CONSTRAINT fk_replacement_order_p_reference FOREIGN KEY(replacement_order_id) REFERENCES p_reference(bar_code),
+    CONSTRAINT fk_replacement_order_p_reference FOREIGN KEY(bar_code) REFERENCES p_reference(bar_code),
 
 );
 
 CREATE TABLE supplier(
-    provider_name VARCHAR(50) NOT NULL,
     cif VARCHAR(10) NOT NULL,
+    bar_code VARCHAR(15) NOT NULL,
+    provider_name VARCHAR(50) NOT NULL,
     full_name VARCHAR(100) NOT NULL,
     supplier_email VARCHAR(100) NOT NULL,
     supplier_phone_number INT CHECK(999999999 > supplier_phone_number >= 100000000),
     comm_address VARCHAR(100) NOT NULL,
     offer FLOAT CHECK(offer > 0),
     fulfilled_orders INT CHECK(fulfilled_orders >= 0),
-    CONSTRAINT pk_supplier PRIMARY KEY(provider_name, cif),
-
+    CONSTRAINT pk_supplier PRIMARY KEY(cif),
+    CONSTRAINT fk_supplier_replacement_order FOREIGN KEY(bar_code) REFERENCES replacement_order(bar_code)
 );
+-- END "MY SHOP"
 
+-- START "BUYING"
 CREATE TABLE purchase_order(
     order_id VARCHAR(20),
     product_id VARCHAR(50),
@@ -148,7 +155,9 @@ CREATE TABLE credit_card_data(
     card_number INT CHECK(9999999999999999 > credit_card_data >= 1000000000000000),
     expiration_date DATE NOT NULL,
 );
+-- END "BUYING"
 
+-- START "RATING"
 CREATE TABLE customer_feedbacks(
     customer_id INT CHECK(customer_id >= 0) NOT NULL,
     product_id VARCHAR(50),
@@ -167,3 +176,4 @@ CREATE TABLE customer_comments(
     likes INT CHECK(likes >= 0),
     tag VARCHAR(40),
 );
+-- END "RATING"
