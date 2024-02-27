@@ -120,6 +120,7 @@ CREATE TABLE purchase_order(
     product_id VARCHAR(50),
     customer_id INT CHECK(customer_id >= 0) NOT NULL,
     purchase_date DATE NOT NULL,
+    -- Charge credit card the same day as the order ("charges to credit cards are always placed on the order’s date")
      -- If orders from same customer to same address > 1, create delivery
     delivery_data VARCHAR(50),   
     CONSTRAINT pk_purchase_order PRIMARY KEY(order_id),
@@ -148,6 +149,7 @@ CREATE TABLE orders_item(
 );
 
 CREATE TABLE registered(
+    -- It needs at least one address, and at most one address per client and town
     registered_id VARCHAR(30) NOT NULL,
     customer_id INT CHECK(customer_id >= 0) NOT NULL,
     reg_username VARCHAR(30) NOT NULL,
