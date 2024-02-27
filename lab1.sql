@@ -180,10 +180,11 @@ CREATE TABLE credit_card_data(
     billing_id VARCHAR(30) NOT NULL,
     cardholder VARCHAR(50) NOT NULL,
     finance_company VARCHAR(30) NOT NULL,
-    card_number INT CHECK(9999999999999999 > credit_card_data >= 1000000000000000),
+    card_number INT CHECK(credit_card_data >= 1000000000000000),
     expiration_date DATE NOT NULL,
     CONSTRAINT pk_credit_card_data PRIMARY KEY(credit_card_data_id),
-    CONSTRAINT fk_credit_card_data_billing_data FOREIGN KEY(billing_id) REFERENCES billing_data(billing_id)
+    CONSTRAINT fk_credit_card_data_billing_data FOREIGN KEY(billing_id) REFERENCES billing_data(billing_id),
+    CONSTRAINT check_credit_card_data_card_number CHECK(9999999999999999 > card_number)
 );
 -- END "BUYING"
 
@@ -194,20 +195,22 @@ CREATE TABLE customer_feedbacks(
     product_id VARCHAR(50),
     bar_code VARCHAR(15),
     opinion VARCHAR(1000),
-    rating INT CHECK(5 >= rating > 0),
+    rating INT CHECK(rating > 0),
     customer_comment VARCHAR(1000),
     CONSTRAINT pk_customer_feedbacks PRIMARY KEY(feedback_id),
-    CONSTRAINT fk_customer_feedbacks_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id)
+    CONSTRAINT fk_customer_feedbacks_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id),
+    CONSTRAINT check_customer_feedbacks_rating CHECK(5 >= rating)
 );
 
 CREATE TABLE customer_comments(
     comment_id VARCHAR(255) NOT NULL,
     customer_id INT CHECK(customer_id >= 0) NOT NULL,
-    score INT CHECK(10 >= rating > 0),
+    score INT CHECK(score > 0),
     text VARCHAR(1000),
     likes INT CHECK(likes >= 0),
     tag VARCHAR(40),
     CONSTRAINT pk_customer_comments PRIMARY KEY(comment_id),
-    CONSTRAINT fk_customer_comments_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id)
+    CONSTRAINT fk_customer_comments_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id),
+    CONSTRAINT check_customer_comments_score CHECK(10 >= score)
 );
 -- END "RATING"
