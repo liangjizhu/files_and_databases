@@ -55,6 +55,7 @@ CREATE TABLE p_reference(
     -- When the min_stock is less than 5 it should place a replacement order automatically
     -- The requested units have to be max_stock - current_stock
     min_stock INT DEFAULT 5 CHECK (min_stock >= 5),
+    -- Max stock should be by default 10 units higher than min_stock
     max_stock INT NOT NULL,
     current_stock INT DEFAULT 0 NOT NULL,
     CONSTRAINT pk_p_reference PRIMARY KEY(bar_code),
@@ -67,12 +68,17 @@ CREATE TABLE p_reference(
 CREATE TABLE replacement_order(
     replacement_order_id VARCHAR(15) NOT NULL,
     bar_code VARCHAR(15) NOT NULL,
+    -- If for some reason there is no supplier for the reference (???),
+    -- the order will remain a draft.
+    -- If there is more than one supplier, you gotta choose one (CHOOSE LOWEST COST)
+    -- (If tie, choose FASTEST PROVIDER)(IF another tie, CHOOSE fewest orders) (ELSE, choose random)
     supplier VARCHAR(35),
     -- The requested units have to be max_stock - current_stock
     request_amount VARCHAR(2),
     -- This has to be updated once the delivery has arrived
     request_date DATE NOT NULL,
     delivery_date DATE NOT NULL,
+    -- orders whose state == PLACED can NOT be updated (unless to change status or delivery date) or deleted
     rorder_state VARCHAR(15),
     received_date DATE NOT NULL,
     payment VARCHAR(20),
@@ -82,6 +88,8 @@ CREATE TABLE replacement_order(
 );
 
 CREATE TABLE supplier(
+    -- If supplier is deleted, delete all offers that are not fullfiled yet
+    -- Set supplier to null in the fullfiled ones
     cif VARCHAR(10) NOT NULL,
     bar_code VARCHAR(15) NOT NULL,
     provider_name VARCHAR(50) NOT NULL,
@@ -142,6 +150,8 @@ CREATE TABLE purchase_order(
     product_id VARCHAR(50),
     customer_id INT CHECK(customer_id >= 0) NOT NULL,
     purchase_date DATE NOT NULL,
+    -- Charge credit card the same day as the order ("charges to credit cards are always placed on the order’s date")
+     -- If orders from same customer to same address > 1, create delivery
     delivery_data VARCHAR(50),   
     CONSTRAINT pk_purchase_order PRIMARY KEY(order_id),
     CONSTRAINT fk_purchase_order_products FOREIGN KEY(product_id) REFERENCES products(product_id),
@@ -160,6 +170,7 @@ CREATE TABLE delivery(
 CREATE TABLE orders_item(
     order_id VARCHAR(20) NOT NULL,
     product_id VARCHAR(50) NOT NULL,
+    -- Check that quantity < Stock (if quantity > stock, quantity = max_stock + display message to user)
     quantity INT CHECK(quantity > 0) NOT NULL,
     unit_price FLOAT CHECK(unit_price > 0) NOT NULL,
     total_price FLOAT NOT NULL,
@@ -168,6 +179,7 @@ CREATE TABLE orders_item(
 );
 
 CREATE TABLE registered(
+    -- It needs at least one address, and at most one address per client and town
     registered_id VARCHAR(30) NOT NULL,
     customer_id INT CHECK(customer_id >= 0) NOT NULL,
     reg_username VARCHAR(30) NOT NULL,

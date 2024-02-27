@@ -1,3 +1,8 @@
+show wrap;
+set linesize 2000;
+alter session set nls_language = 'English';
+select * from all_tables;
+
 desc catalogue;
 desc products;
 desc marketing_format;
