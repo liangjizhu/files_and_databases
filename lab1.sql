@@ -54,7 +54,8 @@ CREATE TABLE p_reference(
     current_stock INT NOT NULL,
     CONSTRAINT pk_p_reference PRIMARY KEY(bar_code),
     CONSTRAINT fk_p_reference_products FOREIGN KEY(product_id) REFERENCES products(product_id),
-    CONSTRAINT check_current_stock CHECK(current_stock >= min_stock),
+    CONSTRAINT check_current_stock_1 CHECK(current_stock >= min_stock),
+    CONSTRAINT check_current_stock_2 CHECK(max_stock >= current_stock),
     CONSTRAINT check_max_stock CHECK(max_stock >= min_stock)
 );
 
@@ -69,8 +70,7 @@ CREATE TABLE replacement_order(
     received_date DATE NOT NULL,
     payment VARCHAR(20),
     CONSTRAINT pk_replacement_order PRIMARY KEY(replacement_order_id),
-    CONSTRAINT fk_replacement_order_p_reference FOREIGN KEY(bar_code) REFERENCES p_reference(bar_code),
-
+    CONSTRAINT fk_replacement_order_p_reference FOREIGN KEY(bar_code) REFERENCES p_reference(bar_code)
 );
 
 CREATE TABLE supplier(
@@ -79,16 +79,28 @@ CREATE TABLE supplier(
     provider_name VARCHAR(50) NOT NULL,
     full_name VARCHAR(100) NOT NULL,
     supplier_email VARCHAR(100) NOT NULL,
-    supplier_phone_number INT CHECK(999999999 > supplier_phone_number >= 100000000),
+    supplier_phone_number INT CHECK(supplier_phone_number >= 100000000),
     comm_address VARCHAR(100) NOT NULL,
     offer FLOAT CHECK(offer > 0),
     fulfilled_orders INT CHECK(fulfilled_orders >= 0),
     CONSTRAINT pk_supplier PRIMARY KEY(cif),
-    CONSTRAINT fk_supplier_replacement_order FOREIGN KEY(bar_code) REFERENCES replacement_order(bar_code)
+    CONSTRAINT fk_supplier_replacement_order FOREIGN KEY(bar_code) REFERENCES replacement_order(replacement_order_id),
+    CONSTRAINT check_supplier_phone_number CHECK(999999999 > supplier_phone_number)
 );
 -- END "MY SHOP"
 
 -- START "BUYING"
+CREATE TABLE customers(
+    customer_id INT CHECK(customer_id >= 0) NOT NULL,
+    delivery_address VARCHAR(100) NOT NULL,
+    billing_data VARCHAR(20) NOT NULL,
+    registered CHAR(1),
+    customer_email VARCHAR(100) NOT NULL,
+    customer_phone_number INT CHECK(customer_phone_number >= 100000000),
+    CONSTRAINT pk_customers PRIMARY KEY(customer_id),
+    CONSTRAINT check_customer_phone_number CHECK(999999999 > customer_phone_number)
+);
+
 CREATE TABLE purchase_order(
     order_id VARCHAR(20),
     product_id VARCHAR(50),
@@ -97,7 +109,7 @@ CREATE TABLE purchase_order(
     delivery_data VARCHAR(50),   
     CONSTRAINT pk_purchase_order PRIMARY KEY(order_id),
     CONSTRAINT fk_purchase_order_products FOREIGN KEY(product_id) REFERENCES products(product_id),
-    CONSTRAINT fk_purchase_order_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id),
+    CONSTRAINT fk_purchase_order_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id)
 );
 
 CREATE TABLE delivery(
@@ -107,7 +119,6 @@ CREATE TABLE delivery(
     delivery_address VARCHAR(100),
     CONSTRAINT pk_delivery PRIMARY KEY(delivery_id),
     CONSTRAINT fk_delivery_purchase_order FOREIGN KEY(order_id) REFERENCES purchase_order(order_id)
-
 );
 
 CREATE TABLE orders_item(
@@ -118,18 +129,6 @@ CREATE TABLE orders_item(
     total_price FLOAT NOT NULL,
     CONSTRAINT pk_orders_item PRIMARY KEY(order_id),
     CONSTRAINT fk_orders_item_products FOREIGN KEY(product_id) REFERENCES products(product_id)
-);
-
-
-
-CREATE TABLE customers(
-    customer_id INT CHECK(customer_id >= 0) NOT NULL,
-    delivery_address VARCHAR(100) NOT NULL,
-    billing_data VARCHAR(20) NOT NULL,
-    registered BOOL DEFAULT FALSE,
-    customer_email VARCHAR(100) NOT NULL,
-    customer_phone_number INT CHECK(999999999 > supplier_phone_number >= 100000000),
-    CONSTRAINT pk_customers PRIMARY KEY(customer_id),
 );
 
 CREATE TABLE registered(
