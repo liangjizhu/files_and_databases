@@ -1,5 +1,6 @@
 DROP TABLE catalogue;
 DROP TABLE products;
+DROP TABLE marketing_format;
 DROP TABLE p_reference;
 DROP TABLE replacement_order;
 DROP TABLE supplier;
@@ -29,10 +30,16 @@ CREATE TABLE products(
     roast_type VARCHAR(10) NOT NULL,
     decaff CHAR(1) NOT NULL,
     -- if NULL -> delete product
-    packaging VARCHAR(15) NOT NULL,
     p_reference VARCHAR(15) NOT NULL,
     CONSTRAINT pk_products PRIMARY KEY(product_id),
     CONSTRAINT fk_products_catalogue FOREIGN KEY(product_id) REFERENCES catalogue(product)
+);
+
+CREATE TABLE marketingFormat(
+    product_format VARCHAR(20) NOT NULL,
+    packaging VARCHAR(15) NOT NULL,
+    CONSTRAINT pk_marketingFormat PRIMARY KEY(product_format),
+    CONSTRAINT fk_marketingFormat_products FOREIGN KEY(product_format) REFERENCES products(product_id)
 );
 
 CREATE TABLE p_reference(
