@@ -49,116 +49,116 @@ CREATE TABLE p_reference(
 );
 
 CREATE TABLE replacement_order(
-    p_reference VARCHAR(15);
+    p_reference VARCHAR(15),
     -- needed??
-    replacement_order_id VARCHAR(15);
-    supplier VARCHAR(35);
-    request_amount VARCHAR(2);
-    request_date DATE NOT NULL;
-    delivery_date DATE NOT NULL;
-    state VARCHAR(15);
-    received_date DATE NOT NULL;
-    payment VARCHAR(20);
-    CONSTRAINT pk_replacement_order PRIMARY KEY(p_reference, replacement_order_id);
-    CONSTRAINT fk_replacement_order_p_reference FOREIGN KEY(p_reference) REFERENCES p_reference(bar_code);
+    replacement_order_id VARCHAR(15),
+    supplier VARCHAR(35),
+    request_amount VARCHAR(2),
+    request_date DATE NOT NULL,
+    delivery_date DATE NOT NULL,
+    state VARCHAR(15),
+    received_date DATE NOT NULL,
+    payment VARCHAR(20),
+    CONSTRAINT pk_replacement_order PRIMARY KEY(p_reference, replacement_order_id),
+    CONSTRAINT fk_replacement_order_p_reference FOREIGN KEY(p_reference) REFERENCES p_reference(bar_code),
 
 );
 
 CREATE TABLE supplier(
-    provider_name VARCHAR(50) NOT NULL;
-    cif VARCHAR(10) NOT NULL;
-    full_name VARCHAR(100) NOT NULL;
-    supplier_email VARCHAR(100) NOT NULL;
-    supplier_phone_number INT CHECK(999999999 > supplier_phone_number >= 100000000);
-    comm_address VARCHAR(100) NOT NULL;
-    offer FLOAT CHECK(offer > 0);
-    fulfilled_orders INT CHECK(fulfilled_orders >= 0);
-    CONSTRAINT pk_supplier PRIMARY KEY(provider_name, cif);
+    provider_name VARCHAR(50) NOT NULL,
+    cif VARCHAR(10) NOT NULL,
+    full_name VARCHAR(100) NOT NULL,
+    supplier_email VARCHAR(100) NOT NULL,
+    supplier_phone_number INT CHECK(999999999 > supplier_phone_number >= 100000000),
+    comm_address VARCHAR(100) NOT NULL,
+    offer FLOAT CHECK(offer > 0),
+    fulfilled_orders INT CHECK(fulfilled_orders >= 0),
+    CONSTRAINT pk_supplier PRIMARY KEY(provider_name, cif),
 
 );
 
 CREATE TABLE purchase_order(
-    order_id VARCHAR(20);
-    product_id VARCHAR(50);
-    purchase_date DATE NOT NULL;
-    delivery_data VARCHAR(50);    
+    order_id VARCHAR(20),
+    product_id VARCHAR(50),
+    purchase_date DATE NOT NULL,
+    delivery_data VARCHAR(50),    
 );
 
 CREATE TABLE delivery(
-    customer_id INT CHECK(customer_id >= 0);
-    order_date DATE NOT NULL;
-    delivery_address VARCHAR(100);
+    customer_id INT CHECK(customer_id >= 0),
+    order_date DATE NOT NULL,
+    delivery_address VARCHAR(100),
 );
 
 CREATE TABLE orders_item(
-    order_id VARCHAR(20) NOT NULL;
-    product_id VARCHAR(50) NOT NULL;
-    quantity INT CHECK(quantity > 0) NOT NULL;
-    unit_price FLOAT CHECK(unit_price > 0) NOT NULL;
-    total_price FLOAT NOT NULL;
+    order_id VARCHAR(20) NOT NULL,
+    product_id VARCHAR(50) NOT NULL,
+    quantity INT CHECK(quantity > 0) NOT NULL,
+    unit_price FLOAT CHECK(unit_price > 0) NOT NULL,
+    total_price FLOAT NOT NULL,
 );
 
 
 
 CREATE TABLE customers(
-    customer_id INT CHECK(customer_id >= 0) NOT NULL;
-    delivery_address VARCHAR(100) NOT NULL;
-    billing_data VARCHAR(20) NOT NULL;
-    registered BOOL DEFAULT FALSE;
-    customer_email VARCHAR(100) NOT NULL;
-    customer_phone_number INT CHECK(999999999 > supplier_phone_number >= 100000000);
+    customer_id INT CHECK(customer_id >= 0) NOT NULL,
+    delivery_address VARCHAR(100) NOT NULL,
+    billing_data VARCHAR(20) NOT NULL,
+    registered BOOL DEFAULT FALSE,
+    customer_email VARCHAR(100) NOT NULL,
+    customer_phone_number INT CHECK(999999999 > supplier_phone_number >= 100000000),
 );
 
 CREATE TABLE registered(
-    customer_id INT CHECK(customer_id >= 0) NOT NULL;
-    reg_username VARCHAR(30) NOT NULL;
-    reg_password VARCHAR(40) NOT NULL;
-    reg_date DATE NOT NULL;
-    reg_name VARCHAR(30) NOT NULL;
-    reg_surname_1 VARCHAR(30) NOT NULL;    
-    reg_surname_2 VARCHAR(30);
-    contact_preference VARCHAR(30) NOT NULL;
-    loyalty_discount BOOL;
-    order_id VARCHAR(20) NOT NULL;
+    customer_id INT CHECK(customer_id >= 0) NOT NULL,
+    reg_username VARCHAR(30) NOT NULL,
+    reg_password VARCHAR(40) NOT NULL,
+    reg_date DATE NOT NULL,
+    reg_name VARCHAR(30) NOT NULL,
+    reg_surname_1 VARCHAR(30) NOT NULL,    
+    reg_surname_2 VARCHAR(30),
+    contact_preference VARCHAR(30) NOT NULL,
+    loyalty_discount BOOL,
+    order_id VARCHAR(20) NOT NULL,
 );
 
 CREATE TABLE non_registered(
-    order_id VARCHAR(20) NOT NULL;
-    non_reg_name VARCHAR(30) NOT NULL;
-    non_reg_surname VARCHAR(30) NOT NULL;
+    order_id VARCHAR(20) NOT NULL,
+    non_reg_name VARCHAR(30) NOT NULL,
+    non_reg_surname VARCHAR(30) NOT NULL,
 );
 
 CREATE TABLE billing_data(
-    customer_id INT CHECK(customer_id >= 0) NOT NULL;
+    customer_id INT CHECK(customer_id >= 0) NOT NULL,
     -- if bill_type == credit card -> credit_card_data
-    bill_type VARCHAR(20);
-    payment_date DATE NOT NULL;
-    credit_card_data BOOL;
+    bill_type VARCHAR(20),
+    payment_date DATE NOT NULL,
+    credit_card_data BOOL,
 );
 
 CREATE TABLE credit_card_data(
-    customer_id INT CHECK(customer_id >= 0) NOT NULL;
-    cardholder VARCHAR(50) NOT NULL;
-    finance_company VARCHAR(30) NOT NULL;
-    card_number INT CHECK(9999999999999999 > credit_card_data >= 1000000000000000);
-    expiration_date DATE NOT NULL;
+    customer_id INT CHECK(customer_id >= 0) NOT NULL,
+    cardholder VARCHAR(50) NOT NULL,
+    finance_company VARCHAR(30) NOT NULL,
+    card_number INT CHECK(9999999999999999 > credit_card_data >= 1000000000000000),
+    expiration_date DATE NOT NULL,
 );
 
 CREATE TABLE customer_feedbacks(
-    customer_id INT CHECK(customer_id >= 0) NOT NULL;
-    product_id VARCHAR(50);
-    bar_code VARCHAR(15);
-    opinion VARCHAR(1000);
-    rating INT CHECK(5 >= rating > 0);
-    customer_comment VARCHAR(1000);
+    customer_id INT CHECK(customer_id >= 0) NOT NULL,
+    product_id VARCHAR(50),
+    bar_code VARCHAR(15),
+    opinion VARCHAR(1000),
+    rating INT CHECK(5 >= rating > 0),
+    customer_comment VARCHAR(1000),
 
     
 );
 
 CREATE TABLE customer_comments(
-    comment_id VARCHAR(255) NOT NULL;
-    score INT CHECK(10 >= rating > 0);
-    text VARCHAR(1000);
-    likes INT CHECK(likes >= 0);
-    tag VARCHAR(40);
+    comment_id VARCHAR(255) NOT NULL,
+    score INT CHECK(10 >= rating > 0),
+    text VARCHAR(1000),
+    likes INT CHECK(likes >= 0),
+    tag VARCHAR(40),
 );
