@@ -6,7 +6,8 @@ select * from fsdb.catalogue;
 select * from fsdb.trolley;
 select * from fsdb.posts;
 
-select PROV_PERSON    from fsdb.catalogue;
+-- trying to insert to the "products" table
+select PRODUCT, FORMAT, COFFEA, VARIETAL, ORIGIN, ROASTING, DECAF, PACKAGING from fsdb.catalogue;
 
 
 desc catalogue;
