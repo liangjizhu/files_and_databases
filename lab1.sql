@@ -92,10 +92,12 @@ CREATE TABLE supplier(
 CREATE TABLE purchase_order(
     order_id VARCHAR(20),
     product_id VARCHAR(50),
+    customer_id INT CHECK(customer_id >= 0) NOT NULL,
     purchase_date DATE NOT NULL,
     delivery_data VARCHAR(50),   
     CONSTRAINT pk_purchase_order PRIMARY KEY(order_id),
-    CONSTRAINT fk_purchase_order_products FOREIGN KEY(product_id) REFERENCES products(product_id)
+    CONSTRAINT fk_purchase_order_products FOREIGN KEY(product_id) REFERENCES products(product_id),
+    CONSTRAINT fk_purchase_order_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id),
 );
 
 CREATE TABLE delivery(
@@ -114,6 +116,8 @@ CREATE TABLE orders_item(
     quantity INT CHECK(quantity > 0) NOT NULL,
     unit_price FLOAT CHECK(unit_price > 0) NOT NULL,
     total_price FLOAT NOT NULL,
+    CONSTRAINT pk_orders_item PRIMARY KEY(order_id),
+    CONSTRAINT fk_orders_item_products FOREIGN KEY(product_id) REFERENCES products(product_id)
 );
 
 
@@ -125,6 +129,7 @@ CREATE TABLE customers(
     registered BOOL DEFAULT FALSE,
     customer_email VARCHAR(100) NOT NULL,
     customer_phone_number INT CHECK(999999999 > supplier_phone_number >= 100000000),
+    CONSTRAINT pk_customers PRIMARY KEY(customer_id),
 );
 
 CREATE TABLE registered(
