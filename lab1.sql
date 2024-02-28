@@ -22,8 +22,8 @@ CREATE TABLE catalogue (
 );
 
 CREATE TABLE products(
-    -- product_id == name
-    product_id VARCHAR(50) NOT NULL,
+    -- product_id == unique ID for each product
+    product_id INT CHECK(product_id >= 10000) NOT NULL,
     product_name VARCHAR(50) NOT NULL,
     coffea VARCHAR(20) NOT NULL,
     varietal VARCHAR(30) NOT NULL,
@@ -33,23 +33,23 @@ CREATE TABLE products(
     -- if NULL -> delete product
     p_reference VARCHAR(15) NOT NULL,
     CONSTRAINT pk_products PRIMARY KEY(product_id),
-    CONSTRAINT fk_products_catalogue FOREIGN KEY(product_id) REFERENCES catalogue(product),
-    CONSTRAINT check_roast_type CHECK(roast_type IN ('natural', 'high-roast', 'mixture')
+    CONSTRAINT fk_products_catalogue FOREIGN KEY(product_name) REFERENCES catalogue(product),
+    CONSTRAINT check_roast_type CHECK(roast_type IN ('natural', 'high-roast', 'mixture'))
 );
 
 CREATE TABLE marketing_format(
     format_id VARCHAR(50) NOT NULL, 
-    product_id VARCHAR(50) NOT NULL,
+    product_id INT CHECK(product_id >= 10000) NOT NULL,
     product_format VARCHAR(20) NOT NULL,
     packaging VARCHAR(15) NOT NULL,
     CONSTRAINT pk_marketing_format PRIMARY KEY(format_id),
     CONSTRAINT fk_marketing_format_products FOREIGN KEY(product_id) REFERENCES products(product_id),
-    CONSTRAINT check_format_id CHECK(format_id IN ('raw grain', 'roasted beans', 'freeze-dried', 'in capsules', 'prepared')
+    CONSTRAINT check_format_id CHECK(format_id IN ('raw grain', 'roasted beans', 'freeze-dried', 'in capsules', 'prepared'))
 );
 
 CREATE TABLE p_reference(    
     bar_code VARCHAR(15) NOT NULL,
-    product_id VARCHAR(50) NOT NULL,
+    product_id INT CHECK(product_id >= 10000) NOT NULL,
     packaging VARCHAR(15),
     retail_price VARCHAR(14),
     -- By default the min_stock should be 5. How????
@@ -85,7 +85,7 @@ CREATE TABLE replacement_order(
     payment VARCHAR(20),
     CONSTRAINT pk_replacement_order PRIMARY KEY(replacement_order_id),
     CONSTRAINT fk_replacement_order_p_reference FOREIGN KEY(bar_code) REFERENCES p_reference(bar_code),
-    CONSTRAINT check_rorder_state CHECK(rorder_state IN ('fulfilled', 'draft', 'placed')
+    CONSTRAINT check_rorder_state CHECK(rorder_state IN ('fulfilled', 'draft', 'placed'))
 );
 
 CREATE TABLE supplier(
@@ -105,7 +105,9 @@ CREATE TABLE supplier(
     CONSTRAINT check_supplier_phone_number CHECK(999999999 > supplier_phone_number),
     -- not the already fulfilled orders to them (which will be kept without a value for provider). 
     -- not the already fulfilled orders to them (which will be kept without a value for provider). 
-    CONSTRAINT fk_fullfilled_orders FOREIGN KEY(fullfilled_orders) REFERENCES replacement_order(replacement_order_id) ON DELETE SET NULL,
+    CONSTRAINT fk_fulfilled_orders FOREIGN KEY(fulfilled_orders) REFERENCES replacement_order(replacement_order_id) ON DELETE SET NULL,
+    -- If the provider is removed from the base, so will be all their supply lines (offers)
+    CONSTRAINT fk_offer FOREIGN KEY(offer) REFERENCES replacement_order(replacement_order_id) ON DELETE CASCADE
 );
 
 CREATE TRIGGER trg_orders(
@@ -123,7 +125,11 @@ BEGIN
         UPDATE supplier
         SET fulfilled_orders = CONCAT_WS(',', fulfilled_orders, NEW.replacement_order_id),
         WHERE cif = supplier_cif;
-END;
+    IF supplier_cif is NOT NULL AND (NEW.rorder_state = 'draft' OR NEW.rorder_state = 'placed' )THEN
+        UPDATE supplier
+        SET offer = CONCAT_WS(',', offer, NEW.offer),
+        WHERE cif = supplier_cif;
+END
 );
 
 -- END "MY SHOP"
@@ -164,7 +170,7 @@ CREATE TABLE delivery(
 
 CREATE TABLE orders_item(
     order_id VARCHAR(20) NOT NULL,
-    product_id VARCHAR(50) NOT NULL,
+    product_id INT CHECK(product_id >= 10000) NOT NULL,
     -- Check that quantity < Stock (if quantity > stock, quantity = max_stock + display message to user)
     quantity INT CHECK(quantity > 0) NOT NULL,
     unit_price FLOAT CHECK(unit_price > 0) NOT NULL,
