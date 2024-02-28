@@ -1,8 +1,9 @@
 show wrap;
 set linesize 2000;
 alter session set nls_language = 'English';
+SELECT table_name FROM all_tables WHERE owner = 'FSDB237';
 
-select * from all_tables;
+SELECT * from all_tables;
 
 select distinct decaf from fsdb.catalogue;
 select distinct product from fsdb.catalogue;
