@@ -1,7 +1,9 @@
 show wrap;
 set linesize 2000;
 alter session set nls_language = 'English';
+
 select * from all_tables;
+
 select * from fsdb.catalogue;
 select * from fsdb.trolley;
 select * from fsdb.posts;
@@ -10,10 +12,10 @@ select * from all_sequences;
 -- trying to insert to the "products" table
 select PRODUCT, FORMAT, COFFEA, VARIETAL, ORIGIN, ROASTING, DECAF, PACKAGING from fsdb.catalogue;
 
-INSERT INTO products (column1, column2, ...)
-SELECT column1, column2, ...
-FROM fsdb.catalogue
-WHERE condition; -- Optional condition to filter the data
+INSERT INTO products (product_id, product_name, coffea, varietal, origin, roast_type, decaff, p_reference)
+SELECT product_id.NEXTVAL, PRODUCT, FORMAT, COFFEA, VARIETAL, ORIGIN, ROASTING, DECAF, PACKAGING
+FROM fsdb.catalogue;
+-- WHERE condition; -- Optional condition to filter the data
 
 desc catalogue;
 desc products;

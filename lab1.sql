@@ -122,7 +122,7 @@ CREATE TABLE customers(
 );
 
 CREATE TABLE purchase_order(
-    order_id VARCHAR(20),
+    order_id VARCHAR(20) NOT NULL,
     product_id INT CHECK(product_id >= 10000) NOT NULL,
     customer_id INT CHECK(customer_id >= 0) NOT NULL,
     purchase_date DATE NOT NULL,
@@ -166,10 +166,9 @@ CREATE TABLE registered(
     reg_surname_2 VARCHAR(30),
     contact_preference VARCHAR(30) DEFAULT 'sms' NOT NULL,
     loyalty_discount CHAR(1),
-    order_id VARCHAR(20) NOT NULL,
+    order_id VARCHAR(20) DEFAULT 'anonymous',
     CONSTRAINT pk_registered PRIMARY KEY(registered_id),
-    CONSTRAINT fk_registered_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id),
-    CONSTRAINT fk_order FOREIGN KEY(order_id) REFERENCES purchase_order(order_id) ON DELETE SET DEFAULT,
+    CONSTRAINT fk_registered_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id)
 );
 
 CREATE TABLE non_registered(
@@ -223,12 +222,12 @@ CREATE TABLE customer_feedbacks(
 CREATE TABLE customer_comments(
     comment_id VARCHAR(255) NOT NULL,
     customer_id INT CHECK(customer_id >= 0) NOT NULL,
-    score INT (CHECK(score > 0) AND CHECK (score < 6)),
+    score INT CHECK(score > 0),
     text VARCHAR(1000),
     likes INT DEFAULT 0 CHECK(likes >= 0),
     tag VARCHAR(40),
     CONSTRAINT pk_customer_comments PRIMARY KEY(comment_id),
     CONSTRAINT fk_customer_comments_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id),
-    CONSTRAINT check_customer_comments_score CHECK(10 >= score)
+    CONSTRAINT check_customer_comments_score CHECK(5 >= score)
 );
 -- END "RATING"
