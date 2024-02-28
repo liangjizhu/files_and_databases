@@ -12,12 +12,16 @@ select * from all_sequences;
 -- trying to insert to the "products" table
 select PRODUCT, FORMAT, COFFEA, VARIETAL, ORIGIN, ROASTING, DECAF, PACKAGING from fsdb.catalogue;
 
-INSERT INTO products (product_id, decaff)
+INSERT INTO products (product_id, product_name, coffea, varietal, origin, roast_type, decaff)
 SELECT
     -- product_id
     seq_product_id.NEXTVAL,
     -- product_name
     PRODUCT,
+    COFFEA,
+    VARIETAL,
+    ORIGIN,
+    ROASTING,
     -- decaff
     CASE
         WHEN DECAF = 'yes' THEN 'Y'
@@ -25,7 +29,8 @@ SELECT
         ELSE DECAF
     END
 FROM fsdb.catalogue
-WHERE PRODUCT IS NOT NULL AND DECAF IS NOT NULL;
+WHERE PRODUCT IS NOT NULL AND DECAF IS NOT NULL AND COFFEA IS NOT NULL
+AND VARIETAL IS NOT NULL AND ORIGIN IS NOT NULL AND ROASTING IN ('natural', 'high-roast', 'mixture');
 -- WHERE condition; -- Optional condition to filter the data
 
 desc catalogue;

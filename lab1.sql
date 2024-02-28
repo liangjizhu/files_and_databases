@@ -27,11 +27,11 @@ CREATE TABLE products(
     -- product_id == unique ID for each product
     product_id NUMBER CHECK(product_id >= 10000) NOT NULL,
     product_name VARCHAR(50) NOT NULL,
-    coffea VARCHAR(20) NOT NULL,
+    coffea VARCHAR(30) NOT NULL,
     varietal VARCHAR(30) NOT NULL,
     origin VARCHAR(15) NOT NULL,
     roast_type VARCHAR(10) NOT NULL,
-    decaff VARCHAR(12) NOT NULL,
+    decaff CHAR(1) NOT NULL,
     CONSTRAINT pk_products PRIMARY KEY(product_id),
     CONSTRAINT fk_products_catalogue FOREIGN KEY(product_name) REFERENCES catalogue(product),
     CONSTRAINT check_roast_type CHECK(roast_type IN ('natural', 'high-roast', 'mixture'))
@@ -249,3 +249,5 @@ CREATE TABLE customer_comments(
     CONSTRAINT check_customer_comments_score CHECK(5 >= score)
 );
 -- END "RATING"
+
+clear scr;
