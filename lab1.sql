@@ -25,7 +25,7 @@ CREATE TABLE catalogue (
 
 CREATE TABLE products(
     -- product_id == unique ID for each product
-    product_id INT CHECK(product_id >= 10000) NOT NULL,
+    product_id NUMBER CHECK(product_id >= 10000) NOT NULL,
     product_name VARCHAR(50) NOT NULL,
     coffea VARCHAR(20) NOT NULL,
     varietal VARCHAR(30) NOT NULL,
@@ -130,11 +130,11 @@ CREATE TABLE address(
     stairs_id CHAR(1),
     floor_num INT,
     door_num INT,
-    zip_code INT NOT NULL
-    town_name VARCHAR(100) NOT NULL
-    country VARCHAR(100) NOT NULL
-    CONSTRAINT pk_address PRIMARY KEY address_id
-    CONSTRAINT fk_address_customers FOREIGN KEY (address_id) REFERENCES customers(customer_id)
+    zip_code INT NOT NULL,
+    town_name VARCHAR(100) NOT NULL,
+    country VARCHAR(100) NOT NULL,
+    CONSTRAINT pk_address PRIMARY KEY address_id,
+    CONSTRAINT fk_address_customers FOREIGN KEY (address_id) REFERENCES customers(customer_id),
     CONSTRAINT check_zip_code CHECK (zip_code >= 10000),
     CONSTRAINT check_valid_ints CHECK (gateway_num > 0 AND block_num > 0 AND door_num > 0)
 );
