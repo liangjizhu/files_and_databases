@@ -4,7 +4,7 @@ alter session set nls_language = 'English';
 
 select * from all_tables;
 
-select * from fsdb.catalogue;
+select distinct decaf from fsdb.catalogue;
 select * from fsdb.trolley;
 select * from fsdb.posts;
 select * from all_sequences;
@@ -21,7 +21,12 @@ SELECT
     COFFEA,
     VARIETAL,
     ORIGIN,
-    ROASTING,
+    CASE
+        WHEN ROASTING = 'blend' THEN 'mixture'
+        WHEN ROASTING = 'natural' THEN 'natural'
+        WHEN ROASTING = 'high-roast' THEN 'high-roast'
+        ELSE ROASTING
+    END,
     -- decaff
     CASE
         WHEN DECAF = 'yes' THEN 'Y'
@@ -30,7 +35,7 @@ SELECT
     END
 FROM fsdb.catalogue
 WHERE PRODUCT IS NOT NULL AND DECAF IS NOT NULL AND COFFEA IS NOT NULL
-AND VARIETAL IS NOT NULL AND ORIGIN IS NOT NULL AND ROASTING IN ('natural', 'high-roast', 'mixture');
+AND VARIETAL IS NOT NULL AND ORIGIN IS NOT NULL AND ROASTING IN ('natural', 'high-roast', 'blend');
 -- WHERE condition; -- Optional condition to filter the data
 
 desc catalogue;

@@ -32,7 +32,7 @@ CREATE TABLE products(
     decaff CHAR(1) NOT NULL,
     CONSTRAINT pk_products PRIMARY KEY(product_id),
     CONSTRAINT fk_products_catalogue FOREIGN KEY(product_name) REFERENCES catalogue(product),
-    CONSTRAINT check_roast_type CHECK(roast_type IN ('natural', 'high-roast', 'mixture'))
+    CONSTRAINT check_roast_type CHECK(roast_type IN ('natural', 'high-roast', 'blend'))
 );
 
 CREATE TABLE marketing_format(
