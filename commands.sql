@@ -13,7 +13,7 @@ select * from all_sequences;
 select PRODUCT, FORMAT, COFFEA, VARIETAL, ORIGIN, ROASTING, DECAF, PACKAGING from fsdb.catalogue;
 
 INSERT INTO products (product_id, product_name, coffea, varietal, origin, roast_type, decaff)
-SELECT product_id.NEXTVAL, PRODUCT, FORMAT, COFFEA, VARIETAL, ORIGIN, ROASTING, DECAF
+SELECT seq_product_id.NEXTVAL, PRODUCT, FORMAT, COFFEA, VARIETAL, ORIGIN, ROASTING, DECAF
 FROM fsdb.catalogue;
 -- WHERE condition; -- Optional condition to filter the data
 
