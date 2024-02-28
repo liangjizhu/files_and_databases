@@ -104,42 +104,9 @@ CREATE TABLE supplier(
     CONSTRAINT fk_supplier_replacement_order FOREIGN KEY(bar_code) REFERENCES p_reference(bar_code),
     CONSTRAINT check_supplier_phone_number CHECK(999999999 > supplier_phone_number),
     -- not the already fulfilled orders to them (which will be kept without a value for provider). 
-<<<<<<< HEAD
-    -- not the already fulfilled orders to them (which will be kept without a value for provider). 
-    CONSTRAINT fk_fulfilled_orders FOREIGN KEY(fulfilled_orders) REFERENCES replacement_order(replacement_order_id) ON DELETE SET NULL,
-    -- If the provider is removed from the base, so will be all their supply lines (offers)
-    CONSTRAINT fk_offer FOREIGN KEY(offer) REFERENCES replacement_order(replacement_order_id) ON DELETE CASCADE
-);
-
-=======
     CONSTRAINT fk_fulfilled_orders FOREIGN KEY(fulfilled_orders) REFERENCES replacement_order(replacement_order_id) ON DELETE SET NULL
 );
 
--- CREATE TRIGGER trg_orders(
--- BEFORE INSERT ON replacement_order
--- FOR EACH ROW
--- BEGIN:
---     DECLARE supplier_cif VARCHAR(10),
-
---     -- Retrieve the CIF of the supplier associated with the replacement order
---     SELECT cif INTO supplier_cif FROM supplier WHERE cif = NEW.supplier,
-
---     -- Check if the supplier exists
---     IF supplier_cif IS NOT NULL AND NEW.rorder_state = 'fulfilled' THEN
---         -- Update the fulfilled_orders column for the corresponding supplier
---         UPDATE supplier
---         SET fulfilled_orders = CONCAT_WS(',', fulfilled_orders, NEW.replacement_order_id),
---         WHERE cif = supplier_cif;
---     END IF;
---     IF supplier_cif is NOT NULL AND (NEW.rorder_state = 'draft' OR NEW.rorder_state = 'placed' )THEN
---         UPDATE supplier
---         SET offer = CONCAT_WS(',', offer, NEW.offer),
---         WHERE cif = supplier_cif,
---     END IF;
--- END;
--- );
-
->>>>>>> 2458c58 (123)
 -- END "MY SHOP"
 
 -- START "BUYING"
