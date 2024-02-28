@@ -110,28 +110,6 @@ CREATE TABLE supplier(
     CONSTRAINT fk_offer FOREIGN KEY(offer) REFERENCES replacement_order(replacement_order_id) ON DELETE CASCADE
 );
 
-CREATE TRIGGER trg_orders(
-BEFORE INSERT ON replacement_order
-FOR EACH ROW
-BEGIN
-    DECLARE supplier_cif VARCHAR(10);
-
-    -- Retrieve the CIF of the supplier associated with the replacement order
-    SELECT cif INTO supplier_cif FROM supplier WHERE cif = NEW.supplier;
-
-    -- Check if the supplier exists
-    IF supplier_cif IS NOT NULL AND NEW.rorder_state = 'fulfilled' THEN
-        -- Update the fulfilled_orders column for the corresponding supplier
-        UPDATE supplier
-        SET fulfilled_orders = CONCAT_WS(',', fulfilled_orders, NEW.replacement_order_id),
-        WHERE cif = supplier_cif;
-    IF supplier_cif is NOT NULL AND (NEW.rorder_state = 'draft' OR NEW.rorder_state = 'placed' )THEN
-        UPDATE supplier
-        SET offer = CONCAT_WS(',', offer, NEW.offer),
-        WHERE cif = supplier_cif;
-END
-);
-
 -- END "MY SHOP"
 
 -- START "BUYING"
