@@ -1,19 +1,21 @@
-DROP TABLE catalogue;
-DROP TABLE products;
-DROP TABLE marketing_format;
-DROP TABLE p_reference;
-DROP TABLE replacement_order;
-DROP TABLE supplier;
-DROP TABLE purchase_order;
-DROP TABLE billing_data;
-DROP TABLE credit_card_data;
-DROP TABLE delivery;
-DROP TABLE orders_item;
-DROP TABLE customers;
-DROP TABLE registered;
-DROP TABLE non_registered;
-DROP TABLE customer_feedbacks;
 DROP TABLE customer_comments;
+DROP TABLE customer_feedbacks;
+DROP TABLE non_registered;
+DROP TABLE registered;
+DROP TABLE orders_item;
+DROP TABLE delivery;
+DROP TABLE credit_card_data;
+DROP TABLE billing_data;
+DROP TABLE purchase_order;
+DROP TABLE customers;
+DROP TABLE supplier;
+DROP TABLE replacement_order;
+DROP TABLE p_reference;
+DROP TABLE marketing_format;
+DROP TABLE products;
+DROP TABLE catalogue;
+
+
 
 -- START "MY SHOP"
 CREATE TABLE catalogue (
@@ -29,9 +31,7 @@ CREATE TABLE products(
     varietal VARCHAR(30) NOT NULL,
     origin VARCHAR(15) NOT NULL,
     roast_type VARCHAR(10) NOT NULL,
-    decaff CHAR(1) NOT NULL,
-    -- if NULL -> delete product
-    p_reference VARCHAR(15) NOT NULL,
+    decaff VARCHAR(12) NOT NULL,
     CONSTRAINT pk_products PRIMARY KEY(product_id),
     CONSTRAINT fk_products_catalogue FOREIGN KEY(product_name) REFERENCES catalogue(product),
     CONSTRAINT check_roast_type CHECK(roast_type IN ('natural', 'high-roast', 'mixture'))
