@@ -1,19 +1,20 @@
-DROP TABLE catalogue;
-DROP TABLE products;
-DROP TABLE marketing_format;
-DROP TABLE p_reference;
-DROP TABLE replacement_order;
-DROP TABLE supplier;
-DROP TABLE purchase_order;
-DROP TABLE billing_data;
-DROP TABLE credit_card_data;
-DROP TABLE delivery;
-DROP TABLE orders_item;
-DROP TABLE customers;
-DROP TABLE registered;
-DROP TABLE non_registered;
-DROP TABLE customer_feedbacks;
 DROP TABLE customer_comments;
+DROP TABLE customer_feedbacks;
+DROP TABLE non_registered;
+DROP TABLE registered;
+DROP TABLE address;
+DROP TABLE orders_item;
+DROP TABLE delivery;
+DROP TABLE credit_card_data;
+DROP TABLE billing_data;
+DROP TABLE purchase_order;
+DROP TABLE customers;
+DROP TABLE supplier;
+DROP TABLE replacement_order;
+DROP TABLE p_reference;
+DROP TABLE marketing_format;
+DROP TABLE products;
+DROP TABLE catalogue;
 
 -- START "MY SHOP"
 CREATE TABLE catalogue (

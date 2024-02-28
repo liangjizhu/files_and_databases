@@ -5,6 +5,8 @@ alter session set nls_language = 'English';
 select * from all_tables;
 
 select distinct decaf from fsdb.catalogue;
+select distinct product from fsdb.catalogue;
+
 select * from fsdb.trolley;
 select * from fsdb.posts;
 select * from all_sequences;
@@ -12,12 +14,18 @@ select * from all_sequences;
 -- trying to insert to the "products" table
 select PRODUCT, FORMAT, COFFEA, VARIETAL, ORIGIN, ROASTING, DECAF, PACKAGING from fsdb.catalogue;
 
+INSERT INTO catalogue (product)
+SELECT DISTINCT
+    c.PRODUCT
+FROM fsdb.catalogue c
+WHERE c.PRODUCT IS NOT NULL;
+
 INSERT INTO products (product_id, product_name, coffea, varietal, origin, roast_type, decaff)
 SELECT
     -- product_id
     seq_product_id.NEXTVAL,
     -- product_name
-    PRODUCT,
+    DISTINCT c.PRODUCT,
     COFFEA,
     VARIETAL,
     ORIGIN,
@@ -36,6 +44,9 @@ SELECT
 FROM fsdb.catalogue
 WHERE PRODUCT IS NOT NULL AND DECAF IS NOT NULL AND COFFEA IS NOT NULL
 AND VARIETAL IS NOT NULL AND ORIGIN IS NOT NULL AND ROASTING IN ('natural', 'high-roast', 'blend');
+
+select distinct product_id, product_name, coffea, varietal, origin, roast_type, decaff from products;
+
 -- WHERE condition; -- Optional condition to filter the data
 
 desc catalogue;
