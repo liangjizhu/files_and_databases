@@ -121,6 +121,24 @@ CREATE TABLE customers(
     CONSTRAINT check_customer_phone_number CHECK(999999999 > customer_phone_number)
 );
 
+CREATE TABLE address(
+    address_id INT CHECK (address_id >=0) NOT NULL,
+    add_type VARCHAR(20) NOT NULL,
+    add_name VARCHAR(100) NOT NULL,
+    gateway_num INT,
+    block_num INT,
+    stairs_id CHAR(1),
+    floor_num INT,
+    door_num INT,
+    zip_code INT NOT NULL
+    town_name VARCHAR(100) NOT NULL
+    country VARCHAR(100) NOT NULL
+    CONSTRAINT pk_address PRIMARY KEY address_id
+    CONSTRAINT fk_address_customers FOREIGN KEY (address_id) REFERENCES customers(customer_id)
+    CONSTRAINT check_zip_code CHECK (zip_code >= 10000),
+    CONSTRAINT check_valid_ints CHECK (gateway_num > 0 AND block_num > 0 AND door_num > 0)
+);
+
 CREATE TABLE purchase_order(
     order_id VARCHAR(20) NOT NULL,
     product_id INT CHECK(product_id >= 10000) NOT NULL,
