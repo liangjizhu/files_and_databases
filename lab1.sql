@@ -97,7 +97,7 @@ CREATE TABLE supplier(
     supplier_email VARCHAR(100) NOT NULL,
     supplier_phone_number INT CHECK(supplier_phone_number >= 100000000),
     comm_address VARCHAR(100) NOT NULL,
-    offer VARCHAR(15) NOT NULL,
+    offer INT CHECK(offer >= 0) NOT NULL,
     fulfilled_orders VARCHAR(15),
     CONSTRAINT pk_supplier PRIMARY KEY(cif),
     CONSTRAINT fk_supplier_replacement_order FOREIGN KEY(bar_code) REFERENCES p_reference(bar_code),
@@ -105,8 +105,6 @@ CREATE TABLE supplier(
     not the already fulfilled orders to them (which will be kept without a value for provider). 
     -- not the already fulfilled orders to them (which will be kept without a value for provider). 
     CONSTRAINT fk_fullfilled_orders FOREIGN KEY(fullfilled_orders) REFERENCES replacement_order(replacement_order_id) ON DELETE SET NULL,
-    -- If the provider is removed from the base, so will be all their supply lines (offers)
-    CONSTRAINT fk_offer FOREIGN KEY(offer) REFERENCES replacement_order(replacement_order_id) ON DELETE CASCADE,
 );
 
 CREATE TRIGGER trg_orders(
@@ -123,10 +121,6 @@ BEGIN
         -- Update the fulfilled_orders column for the corresponding supplier
         UPDATE supplier
         SET fulfilled_orders = CONCAT_WS(',', fulfilled_orders, NEW.replacement_order_id),
-        WHERE cif = supplier_cif;
-    IF supplier_cif is NOT NULL AND (NEW.rorder_state = 'draft' OR NEW.rorder_state = 'placed' )THEN
-        UPDATE supplier
-        SET offer = CONCAT_WS(',', offer, NEW.offer),
         WHERE cif = supplier_cif;
 END;
 );
