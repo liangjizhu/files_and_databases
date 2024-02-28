@@ -133,7 +133,7 @@ CREATE TABLE address(
     zip_code INT NOT NULL,
     town_name VARCHAR(100) NOT NULL,
     country VARCHAR(100) NOT NULL,
-    CONSTRAINT pk_address PRIMARY KEY address_id,
+    CONSTRAINT pk_address PRIMARY KEY (address_id),
     CONSTRAINT fk_address_customers FOREIGN KEY (address_id) REFERENCES customers(customer_id),
     CONSTRAINT check_zip_code CHECK (zip_code >= 10000),
     CONSTRAINT check_valid_ints CHECK (gateway_num > 0 AND block_num > 0 AND door_num > 0)
