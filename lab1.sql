@@ -1,21 +1,19 @@
-DROP TABLE customer_comments;
-DROP TABLE customer_feedbacks;
-DROP TABLE non_registered;
-DROP TABLE registered;
-DROP TABLE orders_item;
-DROP TABLE delivery;
-DROP TABLE credit_card_data;
-DROP TABLE billing_data;
-DROP TABLE purchase_order;
-DROP TABLE customers;
-DROP TABLE supplier;
-DROP TABLE replacement_order;
-DROP TABLE p_reference;
-DROP TABLE marketing_format;
-DROP TABLE products;
 DROP TABLE catalogue;
-
-
+DROP TABLE products;
+DROP TABLE marketing_format;
+DROP TABLE p_reference;
+DROP TABLE replacement_order;
+DROP TABLE supplier;
+DROP TABLE purchase_order;
+DROP TABLE billing_data;
+DROP TABLE credit_card_data;
+DROP TABLE delivery;
+DROP TABLE orders_item;
+DROP TABLE customers;
+DROP TABLE registered;
+DROP TABLE non_registered;
+DROP TABLE customer_feedbacks;
+DROP TABLE customer_comments;
 
 -- START "MY SHOP"
 CREATE TABLE catalogue (
@@ -104,7 +102,10 @@ CREATE TABLE supplier(
     CONSTRAINT fk_supplier_replacement_order FOREIGN KEY(bar_code) REFERENCES p_reference(bar_code),
     CONSTRAINT check_supplier_phone_number CHECK(999999999 > supplier_phone_number),
     -- not the already fulfilled orders to them (which will be kept without a value for provider). 
-    CONSTRAINT fk_fulfilled_orders FOREIGN KEY(fulfilled_orders) REFERENCES replacement_order(replacement_order_id) ON DELETE SET NULL
+    -- not the already fulfilled orders to them (which will be kept without a value for provider). 
+    CONSTRAINT fk_fulfilled_orders FOREIGN KEY(fulfilled_orders) REFERENCES replacement_order(replacement_order_id) ON DELETE SET NULL,
+    -- If the provider is removed from the base, so will be all their supply lines (offers)
+    CONSTRAINT fk_offer FOREIGN KEY(offer) REFERENCES replacement_order(replacement_order_id) ON DELETE CASCADE
 );
 
 -- END "MY SHOP"
@@ -140,8 +141,8 @@ CREATE TABLE address(
 );
 
 CREATE TABLE purchase_order(
-    order_id VARCHAR(20) NOT NULL,
-    product_id INT CHECK(product_id >= 10000) NOT NULL,
+    order_id VARCHAR(20),
+    product_id VARCHAR(50),
     customer_id INT CHECK(customer_id >= 0) NOT NULL,
     purchase_date DATE NOT NULL,
     -- Charge credit card the same day as the order ("charges to credit cards are always placed on the order’s date")
@@ -184,9 +185,10 @@ CREATE TABLE registered(
     reg_surname_2 VARCHAR(30),
     contact_preference VARCHAR(30) DEFAULT 'sms' NOT NULL,
     loyalty_discount CHAR(1),
-    order_id VARCHAR(20) DEFAULT 'anonymous',
+    order_id VARCHAR(20) NOT NULL,
     CONSTRAINT pk_registered PRIMARY KEY(registered_id),
-    CONSTRAINT fk_registered_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id)
+    CONSTRAINT fk_registered_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id),
+    CONSTRAINT fk_order FOREIGN KEY(order_id) REFERENCES purchase_order(order_id) ON DELETE SET DEFAULT
 );
 
 CREATE TABLE non_registered(
@@ -197,6 +199,7 @@ CREATE TABLE non_registered(
     non_reg_surname VARCHAR(30) NOT NULL,
     CONSTRAINT pk_non_registered PRIMARY KEY(non_registered_id),
     CONSTRAINT fk_non_registered_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id)
+
 );
 
 CREATE TABLE billing_data(
@@ -205,7 +208,7 @@ CREATE TABLE billing_data(
     -- if bill_type == credit card -> credit_card_data
     bill_type VARCHAR(20),
     payment_date DATE NOT NULL,
-    credit_card_data CHAR(1),
+    credit_card_data BOOL,
     CONSTRAINT pk_billing_data PRIMARY KEY(billing_id),
     CONSTRAINT fk_billing_data_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id)
 );
@@ -215,7 +218,7 @@ CREATE TABLE credit_card_data(
     billing_id VARCHAR(30) NOT NULL,
     cardholder VARCHAR(50) NOT NULL,
     finance_company VARCHAR(30) NOT NULL,
-    card_number INT CHECK(card_number >= 1000000000000000),
+    card_number INT CHECK(credit_card_data >= 1000000000000000),
     expiration_date DATE NOT NULL,
     CONSTRAINT pk_credit_card_data PRIMARY KEY(credit_card_data_id),
     CONSTRAINT fk_credit_card_data_billing_data FOREIGN KEY(billing_id) REFERENCES billing_data(billing_id),
@@ -227,7 +230,7 @@ CREATE TABLE credit_card_data(
 CREATE TABLE customer_feedbacks(
     feedback_id VARCHAR(30) NOT NULL,
     customer_id INT CHECK(customer_id >= 0) NOT NULL,
-    product_id INT CHECK(product_id >= 10000) NOT NULL,
+    product_id VARCHAR(50),
     bar_code VARCHAR(15),
     opinion VARCHAR(1000),
     rating INT CHECK(rating > 0),
@@ -240,13 +243,13 @@ CREATE TABLE customer_feedbacks(
 CREATE TABLE customer_comments(
     comment_id VARCHAR(255) NOT NULL,
     customer_id INT CHECK(customer_id >= 0) NOT NULL,
-    score INT CHECK(score > 0),
+    score INT CHECK(score > 0) AND CHECK (score < 6),
     text VARCHAR(1000),
     likes INT DEFAULT 0 CHECK(likes >= 0),
     tag VARCHAR(40),
     CONSTRAINT pk_customer_comments PRIMARY KEY(comment_id),
     CONSTRAINT fk_customer_comments_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id),
-    CONSTRAINT check_customer_comments_score CHECK(5 >= score)
+    CONSTRAINT check_customer_comments_score CHECK(10 >= score)
 );
 -- END "RATING"
 
