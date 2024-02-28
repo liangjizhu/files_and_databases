@@ -24,6 +24,7 @@ CREATE TABLE catalogue (
 CREATE TABLE products(
     -- product_id == name
     product_id VARCHAR(50) NOT NULL,
+    product_name VARCHAR(50) NOT NULL,
     coffea VARCHAR(20) NOT NULL,
     varietal VARCHAR(30) NOT NULL,
     origin VARCHAR(15) NOT NULL,
