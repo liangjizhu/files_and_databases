@@ -14,13 +14,18 @@ select PRODUCT, FORMAT, COFFEA, VARIETAL, ORIGIN, ROASTING, DECAF, PACKAGING fro
 
 INSERT INTO products (product_id, decaff)
 SELECT
-    
+    -- product_id
+    seq_product_id.NEXTVAL,
+    -- product_name
+    PRODUCT,
+    -- decaff
     CASE
         WHEN DECAF = 'yes' THEN 'Y'
         WHEN DECAF = 'no' THEN 'N'
         ELSE DECAF
     END
-FROM fsdb.catalogue;
+FROM fsdb.catalogue
+WHERE PRODUCT IS NOT NULL AND DECAF IS NOT NULL;
 -- WHERE condition; -- Optional condition to filter the data
 
 desc catalogue;
