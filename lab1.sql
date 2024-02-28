@@ -98,7 +98,7 @@ CREATE TABLE supplier(
     supplier_email VARCHAR(100) NOT NULL,
     supplier_phone_number INT CHECK(supplier_phone_number >= 100000000),
     comm_address VARCHAR(100) NOT NULL,
-    offer VARCHAR(15) NOT NULL,
+    offer INT CHECK(offer >= 0) NOT NULL,
     fulfilled_orders VARCHAR(15),
     CONSTRAINT pk_supplier PRIMARY KEY(cif),
     CONSTRAINT fk_supplier_replacement_order FOREIGN KEY(bar_code) REFERENCES p_reference(bar_code),
