@@ -1,3 +1,5 @@
+select * from all_sequences;
+
 DROP SEQUENCE seq_product_id;
 
 CREATE SEQUENCE seq_product_id

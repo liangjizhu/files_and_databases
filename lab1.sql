@@ -1,3 +1,7 @@
+-- CREATION OF TABLES
+-- Basically we create tables with lab1.sql
+-- We try to insert the elements in the tables using the commands.sql
+-- The sequences we need are in id_generator.sql
 DROP TABLE customer_comments;
 DROP TABLE customer_feedbacks;
 DROP TABLE non_registered;
@@ -32,8 +36,8 @@ CREATE TABLE products(
     roast_type VARCHAR(10) NOT NULL,
     decaff CHAR(1) NOT NULL,
     CONSTRAINT pk_products PRIMARY KEY(product_id),
-    CONSTRAINT fk_products_catalogue FOREIGN KEY(product_name) REFERENCES catalogue(product),
-    CONSTRAINT check_roast_type CHECK(roast_type IN ('natural', 'high-roast', 'blend'))
+    CONSTRAINT fk_products_catalogue FOREIGN KEY(product_name) REFERENCES catalogue(product)
+    -- CONSTRAINT check_roast_type CHECK(roast_type IN ('natural', 'high-roast', 'blend'))
 );
 
 CREATE TABLE marketing_format(
@@ -250,3 +254,5 @@ CREATE TABLE customer_comments(
 -- END "RATING"
 
 -- clear scr;
+
+SELECT table_name FROM all_tables WHERE owner = 'FSDB237';
