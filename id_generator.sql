@@ -1,9 +1,0 @@
-select * from all_sequences;
-
-DROP SEQUENCE seq_product_id;
-
-CREATE SEQUENCE seq_product_id
-START WITH 10000
-INCREMENT BY 1
-MAXVALUE 99999
-NOCYCLE;

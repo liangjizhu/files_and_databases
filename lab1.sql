@@ -28,7 +28,7 @@ CREATE TABLE catalogue (
 
 CREATE TABLE products(
     -- product_id == unique ID for each product
-    product_id NUMBER CHECK(product_id >= 10000) NOT NULL,
+    product_id NUMBER CHECK(product_id >= 1) NOT NULL,
     product_name VARCHAR(50) NOT NULL,
     coffea VARCHAR(30) NOT NULL,
     varietal VARCHAR(30) NOT NULL,
@@ -41,8 +41,8 @@ CREATE TABLE products(
 );
 
 CREATE TABLE marketing_format(
-    format_id VARCHAR(50) NOT NULL, 
-    product_id INT CHECK(product_id >= 10000) NOT NULL,
+    format_id NUMBER CHECK(format_id >= 10000) NOT NULL, 
+    product_id NUMBER CHECK(product_id >= 1) NOT NULL,
     product_format VARCHAR(20) NOT NULL,
     packaging VARCHAR(15) NOT NULL,
     CONSTRAINT pk_marketing_format PRIMARY KEY(format_id),
@@ -52,7 +52,7 @@ CREATE TABLE marketing_format(
 
 CREATE TABLE p_reference(    
     bar_code VARCHAR(15) NOT NULL,
-    product_id INT CHECK(product_id >= 10000) NOT NULL,
+    product_id NUMBER CHECK(product_id >= 1) NOT NULL,
     packaging VARCHAR(15),
     retail_price VARCHAR(14),
     -- By default the min_stock should be 5. How????
@@ -144,7 +144,7 @@ CREATE TABLE address(
 
 CREATE TABLE purchase_order(
     order_id VARCHAR(20),
-    product_id INT CHECK(product_id >= 10000) NOT NULL,
+    product_id NUMBER CHECK(product_id >= 1) NOT NULL,
     customer_id INT CHECK(customer_id >= 0) NOT NULL,
     purchase_date DATE NOT NULL,
     -- Charge credit card the same day as the order ("charges to credit cards are always placed on the order’s date")
@@ -166,7 +166,7 @@ CREATE TABLE delivery(
 
 CREATE TABLE orders_item(
     order_id VARCHAR(20) NOT NULL,
-    product_id INT CHECK(product_id >= 10000) NOT NULL,
+    product_id NUMBER CHECK(product_id >= 1) NOT NULL,
     -- Check that quantity < Stock (if quantity > stock, quantity = max_stock + display message to user)
     quantity INT CHECK(quantity > 0) NOT NULL,
     unit_price FLOAT CHECK(unit_price > 0) NOT NULL,
@@ -230,7 +230,7 @@ CREATE TABLE credit_card_data(
 CREATE TABLE customer_feedbacks(
     feedback_id VARCHAR(30) NOT NULL,
     customer_id INT CHECK(customer_id >= 0) NOT NULL,
-    product_id INT CHECK(product_id >= 10000) NOT NULL,
+    product_id NUMBER CHECK(product_id >= 1) NOT NULL,
     bar_code VARCHAR(15),
     opinion VARCHAR(1000),
     rating INT CHECK(rating > 0),
