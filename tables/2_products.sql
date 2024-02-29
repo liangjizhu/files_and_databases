@@ -63,7 +63,8 @@ FROM temp_table;
 DROP TABLE temp_table;
 -- 
 
--- select distinct product_id, product_name, coffea, varietal, origin, roast_type, decaff from products;
+select distinct product_id, product_name, coffea, varietal, origin, roast_type, decaff from products;
+select * from products;
 
 -- THERE ARE 750 possibilities of product with different product names NOT TAKING INTO ACCOUNT THE FORMAT AND PACKAGING
 

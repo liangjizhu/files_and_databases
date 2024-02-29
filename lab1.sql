@@ -47,7 +47,7 @@ CREATE TABLE marketing_format(
     packaging VARCHAR(15) NOT NULL,
     CONSTRAINT pk_marketing_format PRIMARY KEY(format_id),
     CONSTRAINT fk_marketing_format_products FOREIGN KEY(product_id) REFERENCES products(product_id),
-    CONSTRAINT check_format_id CHECK(format_id IN ('raw grain', 'roasted beans', 'freeze-dried', 'in capsules', 'prepared'))
+    CONSTRAINT check_product_format CHECK(product_format IN ('raw grain', 'roasted beans', 'freeze-dried', 'in capsules', 'prepared', 'ground'))
 );
 
 CREATE TABLE p_reference(    
@@ -255,4 +255,4 @@ CREATE TABLE customer_comments(
 
 -- clear scr;
 
-SELECT table_name FROM all_tables WHERE owner = 'FSDB237';
+SELECT table_name FROM all_tables WHERE owner = 'FSDB235';
