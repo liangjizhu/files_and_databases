@@ -47,7 +47,7 @@ CREATE TABLE marketing_format(
     packaging VARCHAR(15) NOT NULL,
     CONSTRAINT pk_marketing_format PRIMARY KEY(format_id),
     CONSTRAINT fk_marketing_format_products FOREIGN KEY(product_id) REFERENCES products(product_id),
-    CONSTRAINT check_format_id CHECK(format_id IN ('raw grain', 'roasted beans', 'freeze-dried', 'in capsules', 'prepared'))
+    CONSTRAINT check_product_format CHECK(product_format IN ('raw grain', 'roasted beans', 'freeze-dried', 'in capsules', 'prepared', 'ground'))
 );
 
 CREATE TABLE p_reference(    
@@ -70,7 +70,7 @@ CREATE TABLE p_reference(
 );
 
 CREATE TABLE replacement_order(
-    replacement_order_id VARCHAR(15) NOT NULL,
+    replacement_order_id NUMBER CHECK(format_id >= 20000) NOT NULL,
     bar_code VARCHAR(15) NOT NULL,
     -- If for some reason there is no supplier for the reference (???),
     -- the order will remain a draft.
@@ -80,12 +80,14 @@ CREATE TABLE replacement_order(
     -- The requested units have to be max_stock - current_stock
     request_amount VARCHAR(2),
     -- This has to be updated once the delivery has arrived
-    request_date DATE NOT NULL,
-    delivery_date DATE NOT NULL,
+    request_date DATE,
+    delivery_date DATE,
     -- orders whose state == PLACED can NOT be updated (unless to change status or delivery date) or deleted
+    -- CAN BE NULL BECAUSE IN THE DATABASE PROVIDED THERE IS NO RECEIVED ORDER DATE NEITHER STATE
     rorder_state VARCHAR(15),
-    received_date DATE NOT NULL,
-    payment VARCHAR(20),
+    received_date DATE,
+    -- payments refers to the supplier's bankaccount
+    payment VARCHAR(20) NOT NULL,
     CONSTRAINT pk_replacement_order PRIMARY KEY(replacement_order_id),
     CONSTRAINT fk_replacement_order_p_reference FOREIGN KEY(bar_code) REFERENCES p_reference(bar_code),
     CONSTRAINT check_rorder_state CHECK(rorder_state IN ('fulfilled', 'draft', 'placed'))
@@ -255,4 +257,4 @@ CREATE TABLE customer_comments(
 
 -- clear scr;
 
-SELECT table_name FROM all_tables WHERE owner = 'FSDB237';
+SELECT table_name FROM all_tables WHERE owner = 'FSDB235';
