@@ -232,5 +232,3 @@ CREATE TABLE customer_comments(
 -- END "RATING"
 
 -- clear scr;
-
-SELECT table_name FROM all_tables WHERE owner = 'FSDB235';
