@@ -21,9 +21,10 @@ INCREMENT BY 1
 MAXVALUE 50000
 NOCYCLE;
 
+DROP TABLE temp_table;
 
 CREATE TABLE temp_table(
-    customer_id NUMBER CHECK(customer_id >= 40000) NOT NULL,
+    customer_id NUMBER CHECK(customer_id >= 40000),
     username CHAR(30),
     reg_date CHAR(14),
     reg_time CHAR(14),
@@ -57,7 +58,7 @@ SET customer_id = (
     seq_customer_id.NEXTVAL
 );
 
-INSERT INTO customer(customer_id, username, reg_date, reg_time,
+INSERT INTO customers(customer_id, username, reg_date, reg_time,
 user_password, customer_name, customer_surname1, customer_surname2,
 customer_email, customer_phone_number)
 SELECT
@@ -96,9 +97,14 @@ from fsdb.trolley WHERE USERNAME IS NULL;
 select distinct USERNAME, CLIENT_EMAIL from fsdb.trolley;
 select distinct USERNAME, CLIENT_MOBILE from fsdb.trolley;
 
+select distinct USERNAME, CLIENT_MOBILE from fsdb.;
+
+
 -- address inputs
 SELECT distinct DLIV_DATE,DLIV_TIME,DLIV_WAYTYPE,DLIV_WAYNAME,DLIV_GATE,DLIV_BLOCK, DLIV_STAIRW, DLIV_FLOOR, DLIV_DOOR, DLIV_ZIP, DLIV_TOWN, DLIV_COUNTRY 
 from fsdb.trolley
 where DLIV_WAYNAME IS NOT NULL AND DLIV_FLOOR IS NOT NULL AND DLIV_DOOR IS NOT NULL AND DLIV_COUNTRY IS NOT NULL AND DLIV_TOWN IS NOT NULL;
- 
+
+select distinct text from fsdb.posts;
 desc fsdb.trolley;
+desc fsdb.posts;
