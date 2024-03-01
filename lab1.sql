@@ -120,10 +120,10 @@ CREATE TABLE supplier(
 -- START "BUYING"
 CREATE TABLE customers(
     customer_id NUMBER CHECK(customer_id >= 40000) NOT NULL,
-    delivery_address VARCHAR(100) NOT NULL,
-    billing_id,
+    delivery_address VARCHAR(300) NOT NULL,
+    billing_id NUMBER,
     registered CHAR(1),
-    customer_email VARCHAR(100) NOT NULL,
+    customer_email VARCHAR(100),
     customer_phone_number INT CHECK(customer_phone_number >= 100000000),
     CONSTRAINT pk_customers PRIMARY KEY(customer_id),
     CONSTRAINT check_customer_phone_number CHECK(999999999 > customer_phone_number)
@@ -132,7 +132,7 @@ CREATE TABLE customers(
 CREATE TABLE purchase_order(
     order_id VARCHAR(20),
     product_id NUMBER CHECK(product_id >= 1) NOT NULL,
-    customer_id INT CHECK(customer_id >= 0) NOT NULL,
+    customer_id NUMBER CHECK(customer_id >= 40000) NOT NULL,
     purchase_date DATE NOT NULL,
     -- Charge credit card the same day as the order ("charges to credit cards are always placed on the order’s date")
      -- If orders from same customer to same address > 1, create delivery
@@ -164,8 +164,8 @@ CREATE TABLE orders_item(
 
 CREATE TABLE registered(
     -- It needs at least one address, and at most one address per client and town
-    registered_id VARCHAR(30) NOT NULL,
-    customer_id INT CHECK(customer_id >= 0) NOT NULL,
+    registered_id NUMBER CHECK(registered_id >= 100000),
+    customer_id NUMBER CHECK(customer_id >= 40000) NOT NULL,
     reg_username VARCHAR(30) NOT NULL,
     reg_password VARCHAR(40) NOT NULL,
     reg_date DATE NOT NULL,
@@ -174,14 +174,13 @@ CREATE TABLE registered(
     reg_surname_2 VARCHAR(30),
     contact_preference VARCHAR(30) DEFAULT 'sms' NOT NULL,
     loyalty_discount CHAR(1),
-    order_id VARCHAR(20) NOT NULL,
     CONSTRAINT pk_registered PRIMARY KEY(registered_id),
     CONSTRAINT fk_registered_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id)
 );
 
 CREATE TABLE non_registered(
     non_registered_id VARCHAR(30) NOT NULL,
-    customer_id INT CHECK(customer_id >= 0) NOT NULL,
+    customer_id NUMBER CHECK(customer_id >= 40000) NOT NULL,
     order_id VARCHAR(20) NOT NULL,
     non_reg_name VARCHAR(30) NOT NULL,
     non_reg_surname VARCHAR(30) NOT NULL,
@@ -191,7 +190,7 @@ CREATE TABLE non_registered(
 
 CREATE TABLE billing_data(
     billing_id VARCHAR(30) NOT NULL,
-    customer_id INT CHECK(customer_id >= 0) NOT NULL,
+    customer_id NUMBER CHECK(customer_id >= 40000) NOT NULL,
     -- if bill_type == credit card -> credit_card_data
     bill_type VARCHAR(20),
     payment_date DATE NOT NULL,
@@ -216,7 +215,7 @@ CREATE TABLE credit_card_data(
 -- START "RATING"
 CREATE TABLE customer_feedbacks(
     feedback_id VARCHAR(30) NOT NULL,
-    customer_id INT CHECK(customer_id >= 0) NOT NULL,
+    customer_id NUMBER CHECK(customer_id >= 40000) NOT NULL,
     product_id NUMBER CHECK(product_id >= 1) NOT NULL,
     bar_code VARCHAR(15),
     opinion VARCHAR(1000),
@@ -229,7 +228,7 @@ CREATE TABLE customer_feedbacks(
 
 CREATE TABLE customer_comments(
     comment_id VARCHAR(255) NOT NULL,
-    customer_id INT CHECK(customer_id >= 0) NOT NULL,
+    customer_id NUMBER CHECK(customer_id >= 40000) NOT NULL,
     score INT CHECK(score > 0),
     text VARCHAR(1000),
     likes INT DEFAULT 0 CHECK(likes >= 0),
