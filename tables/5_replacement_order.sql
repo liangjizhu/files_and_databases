@@ -9,6 +9,7 @@ NOCYCLE;
 
 DROP TABLE temp_table;
 
+-- create a temporal table to work with the datas
 CREATE TABLE temp_table (
     replacement_order_id NUMBER CHECK(replacement_order_id >= 20000) NOT NULL,
     bar_code VARCHAR(15) NOT NULL,
@@ -31,6 +32,7 @@ SELECT
 FROM
     (SELECT DISTINCT c.barcode, c.supplier, c.PROV_BANKACC
      FROM fsdb.catalogue c
+    --  check that bar_code from p_reference table matches with this table
      JOIN p_reference s ON c.barcode = s.bar_code
      WHERE c.barcode IS NOT NULL 
        AND c.supplier IS NOT NULL 
@@ -48,6 +50,7 @@ SET rorder_state = (
     END
 );
 
+-- request_amount generated automatically??
 UPDATE temp_table tt
 SET tt.request_amount = (
     SELECT (TO_NUMBER(pr.max_stock) - TO_NUMBER(pr.current_stock))
@@ -56,6 +59,7 @@ SET tt.request_amount = (
         AND TO_NUMBER(pr.current_stock) < TO_NUMBER(pr.min_stock)
 );
 
+-- upload to main table
 INSERT INTO replacement_order (replacement_order_id, bar_code, supplier, request_amount, request_date, rorder_state, received_date, payment)
 SELECT
     replacement_order_id,
