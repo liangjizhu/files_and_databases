@@ -70,7 +70,7 @@ CREATE TABLE p_reference(
 );
 
 CREATE TABLE replacement_order(
-    replacement_order_id NUMBER CHECK(format_id >= 20000) NOT NULL,
+    replacement_order_id NUMBER CHECK(replacement_order_id >= 20000) NOT NULL,
     bar_code VARCHAR(15) NOT NULL,
     -- If for some reason there is no supplier for the reference (???),
     -- the order will remain a draft.
@@ -78,7 +78,7 @@ CREATE TABLE replacement_order(
     -- (If tie, choose FASTEST PROVIDER)(IF another tie, CHOOSE fewest orders) (ELSE, choose random)
     supplier VARCHAR(35),
     -- The requested units have to be max_stock - current_stock
-    request_amount VARCHAR(2),
+    request_amount NUMBER CHECK(request_amount > 0),
     -- This has to be updated once the delivery has arrived
     request_date DATE,
     delivery_date DATE,
@@ -87,10 +87,10 @@ CREATE TABLE replacement_order(
     rorder_state VARCHAR(15),
     received_date DATE,
     -- payments refers to the supplier's bankaccount
-    payment VARCHAR(20) NOT NULL,
+    payment VARCHAR(30) NOT NULL,
     CONSTRAINT pk_replacement_order PRIMARY KEY(replacement_order_id),
     CONSTRAINT fk_replacement_order_p_reference FOREIGN KEY(bar_code) REFERENCES p_reference(bar_code),
-    CONSTRAINT check_rorder_state CHECK(rorder_state IN ('fulfilled', 'draft', 'placed'))
+    CONSTRAINT check_rorder_state CHECK(rorder_state IN ('fulfilled', 'draft', 'placed', NULL))
 );
 
 CREATE TABLE supplier(
@@ -107,9 +107,7 @@ CREATE TABLE supplier(
     fulfilled_orders VARCHAR(15),
     CONSTRAINT pk_supplier PRIMARY KEY(cif),
     CONSTRAINT fk_supplier_replacement_order FOREIGN KEY(bar_code) REFERENCES p_reference(bar_code),
-    CONSTRAINT check_supplier_phone_number CHECK(999999999 > supplier_phone_number),
-    -- not the already fulfilled orders to them (which will be kept without a value for provider). 
-    CONSTRAINT fk_fulfilled_orders FOREIGN KEY(fulfilled_orders) REFERENCES replacement_order(replacement_order_id) ON DELETE SET NULL
+    CONSTRAINT check_supplier_phone_number CHECK(999999999 > supplier_phone_number)
 );
 
 -- END "MY SHOP"

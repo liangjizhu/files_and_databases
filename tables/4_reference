@@ -44,3 +44,5 @@ SELECT
 FROM temp_table;
 
 DROP TABLE temp_table;
+
+-- select * from p_reference;
