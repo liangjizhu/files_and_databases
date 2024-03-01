@@ -21,12 +21,11 @@ CREATE TABLE temp_table (
     payment VARCHAR(30) NOT NULL
 );
 
-INSERT INTO temp_table (replacement_order_id, bar_code, supplier, request_amount, request_date, payment)
+INSERT INTO temp_table (replacement_order_id, bar_code, supplier, request_date, payment)
 SELECT
     seq_replacement_order_id.NEXTVAL,
     barcode,
     supplier,
-    TO_NUMBER(s.max_stock) - TO_NUMBER(s.current_stock) AS request_amount,
     SYSDATE AS request_date,
     PROV_BANKACC
 FROM
@@ -38,19 +37,34 @@ FROM
        AND PROV_BANKACC IS NOT NULL
        AND TO_NUMBER(s.current_stock) < TO_NUMBER(s.min_stock));
 
-SELECT * FROM TEMP_TABLE;
-DESC fsdb.catalogue;
-DESC fsdb.trolley;
-DESC fsdb.posts;
+-- rorder_state
+UPDATE temp_table
+SET rorder_state = (
+    CASE 
+        WHEN SYSDATE > delivery_date THEN 'Placed'
+        WHEN received_date > SYSDATE THEN 'fulfilled'
+        ELSE 'Draft'
+    END
+);
 
+UPDATE temp_table tt
+SET tt.request_amount = (
+    SELECT (TO_NUMBER(pr.max_stock) - TO_NUMBER(pr.current_stock))
+    FROM p_reference pr
+    WHERE pr.bar_code = tt.bar_code 
+        AND TO_NUMBER(pr.current_stock) < TO_NUMBER(pr.min_stock)
+);
 
-select * from fsdb.catalogue;
+INSERT INTO replacement_order (replacement_order_id, bar_code, supplier, request_amount, request_date, payment)
+SELECT
+    replacement_order_id,
+    bar_code,
+    supplier,
+    request_amount,
+    request_date,
+    rorder_state,
+    received_date,
+    payment
+FROM TEMP_TABLE;
 
-select distinct barcode from fsdb.catalogue;
-select distinct supplier from fsdb.catalogue;
-select distinct PROV_BANKACC from fsdb.catalogue;
-select distinct  PROV_TAXID from fsdb.catalogue;
-
-select CUR_STOCK from fsdb.catalogue;
-
-select DISTINCT ORDERTIME from fsdb.trolley;
+DROP TABLE temp_table;

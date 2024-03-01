@@ -84,13 +84,13 @@ CREATE TABLE replacement_order(
     delivery_date DATE,
     -- orders whose state == PLACED can NOT be updated (unless to change status or delivery date) or deleted
     -- CAN BE NULL BECAUSE IN THE DATABASE PROVIDED THERE IS NO RECEIVED ORDER DATE NEITHER STATE
-    rorder_state VARCHAR(15),
+    rorder_state VARCHAR(15) DEFAULT 'draft' NOT NULL,
     received_date DATE,
     -- payments refers to the supplier's bankaccount
     payment VARCHAR(30) NOT NULL,
     CONSTRAINT pk_replacement_order PRIMARY KEY(replacement_order_id),
     CONSTRAINT fk_replacement_order_p_reference FOREIGN KEY(bar_code) REFERENCES p_reference(bar_code),
-    CONSTRAINT check_rorder_state CHECK(rorder_state IN ('fulfilled', 'draft', 'placed', NULL))
+    CONSTRAINT check_rorder_state CHECK(rorder_state IN ('fulfilled', 'draft', 'placed'))
 );
 
 CREATE TABLE supplier(
