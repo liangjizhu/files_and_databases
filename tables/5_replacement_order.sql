@@ -29,13 +29,14 @@ SELECT
     SYSDATE AS request_date,
     PROV_BANKACC
 FROM
-    (SELECT DISTINCT barcode, supplier, PROV_BANKACC
-     FROM fsdb.catalogue
-     JOIN p_reference s ON barcode = s.bar_code
-     WHERE barcode IS NOT NULL 
-       AND supplier IS NOT NULL 
-       AND PROV_BANKACC IS NOT NULL
-       AND TO_NUMBER(s.current_stock) < TO_NUMBER(s.min_stock));
+    (SELECT DISTINCT c.barcode, c.supplier, c.PROV_BANKACC
+     FROM fsdb.catalogue c
+     JOIN p_reference s ON c.barcode = s.bar_code
+     WHERE c.barcode IS NOT NULL 
+       AND c.supplier IS NOT NULL 
+       AND c.PROV_BANKACC IS NOT NULL
+       AND TO_NUMBER(s.current_stock) < TO_NUMBER(s.min_stock)
+    );
 
 -- rorder_state
 UPDATE temp_table
@@ -55,7 +56,7 @@ SET tt.request_amount = (
         AND TO_NUMBER(pr.current_stock) < TO_NUMBER(pr.min_stock)
 );
 
-INSERT INTO replacement_order (replacement_order_id, bar_code, supplier, request_amount, request_date, payment)
+INSERT INTO replacement_order (replacement_order_id, bar_code, supplier, request_amount, request_date, rorder_state, received_date, payment)
 SELECT
     replacement_order_id,
     bar_code,
