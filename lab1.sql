@@ -6,7 +6,6 @@ DROP TABLE customer_comments;
 DROP TABLE customer_feedbacks;
 DROP TABLE non_registered;
 DROP TABLE registered;
-DROP TABLE address;
 DROP TABLE orders_item;
 DROP TABLE delivery;
 DROP TABLE credit_card_data;
