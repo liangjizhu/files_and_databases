@@ -17,16 +17,16 @@
 DROP SEQUENCE seq_registered_id;
 
 CREATE SEQUENCE seq_registered_id
-START WITH 100000
+START WITH 50000
 INCREMENT BY 1
-MAXVALUE 999999
+MAXVALUE 60000
 NOCYCLE;
 
-DROP TABLE  temp_table_1;
+DROP TABLE  temp_table;
 
-CREATE TABLE  temp_table_1(
+CREATE TABLE  temp_table(
     -- It needs at least one address, and at most one address per client and town
-    registered_id NUMBER CHECK(registered_id >= 100000),
+    registered_id NUMBER CHECK(registered_id >= 50000),
     customer_id NUMBER CHECK(customer_id >= 40000),
     reg_username VARCHAR(30),
     reg_password VARCHAR(40) ,
@@ -38,13 +38,20 @@ CREATE TABLE  temp_table_1(
     loyalty_discount CHAR(1)
 );
 
-INSERT INTO  temp_table_1(reg_username)
+INSERT INTO  temp_table(reg_username, reg_password, reg_date, reg_name, reg_surname_1, reg_surname_2, contact_preference)
 SELECT DISTINCT
-    t.USERNAME
+    t.USERNAME,
+    t.USER_PASSW,
+    t.REG_DATE,
+    t.CLIENT_NAME,
+    t.CLIENT_SURN1,
+    t.CLIENT_SURN2,
+    CASE
+        WHEN 
 FROM 
     fsdb.trolley t
 JOIN 
-    customers c ON t.CLIENT_EMAIL = c.customer_email
+    customers c ON t.CLIENT_EMAIL = c.customer_email OR t.CLIENT_MOBILE = c.customer_phone_number
 WHERE 
     c.registered = 'Y' AND t.username IS NOT NULL;
 
@@ -101,4 +108,4 @@ WHERE
 -- where PAYMENT_TYPE IS  AND DLIV_WAYNAME IS  AND DLIV_FLOOR IS  AND DLIV_DOOR IS  AND DLIV_COUNTRY IS  AND DLIV_TOWN IS ;
 
 -- select distinct text from fsdb.posts;
--- desc fsdb.trolley;
+desc fsdb.trolley;
