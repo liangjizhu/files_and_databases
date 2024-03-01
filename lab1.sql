@@ -119,7 +119,7 @@ CREATE TABLE supplier(
 
 -- START "BUYING"
 CREATE TABLE customers(
-    customer_id INT CHECK(customer_id >= 0) NOT NULL,
+    customer_id NUMBER CHECK(customer_id >= 40000) NOT NULL,
     delivery_address VARCHAR(100) NOT NULL,
     billing_data VARCHAR(20) NOT NULL,
     registered CHAR(1),

@@ -330,7 +330,7 @@ WHERE c.PROV_TAXID IS NOT NULL
   AND c.PROV_COUNTRY IS NOT NULL 
   AND c.PROV_BANKACC IS NOT NULL;
 
-select bar_code, cif, supplier_name, full_name, supplier_email, supplier_phone_number, comm_address, supplier_country, supplier_bankacc from supplier;
+-- select bar_code, cif, supplier_name, full_name, supplier_email, supplier_phone_number, comm_address, supplier_country, supplier_bankacc from supplier;
 -- select DISTINCT product_id from p_reference;
 
 
@@ -338,3 +338,6 @@ select bar_code, cif, supplier_name, full_name, supplier_email, supplier_phone_n
 -- select distinct PROV_TAXID, BARCODE from fsdb.catalogue;
 -- desc fsdb.catalogue;
 
+-- 
+-- customers
+-- 
