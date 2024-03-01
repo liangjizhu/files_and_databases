@@ -23,16 +23,16 @@ NOCYCLE;
 
 CREATE TABLE temp_table(
     order_id VARCHAR(20),
-    bar_code NUMBER,
+    bar_code VARCHAR(50),
     customer_id INT,
     delivery_data VARCHAR(50)
 );
 
 INSERT INTO temp_table(bar_code)
 SELECT
-    BARCODE,
+    BARCODE
 FROM fsdb.trolley
-GROUP BY BARCODE;
+WHERE BARCODE IS NOT NULL;
 
 UPDATE temp_table
 SET customer_id = (
