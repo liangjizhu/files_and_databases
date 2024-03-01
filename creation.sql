@@ -214,16 +214,20 @@ CREATE TABLE credit_card_data(
 -- START "RATING"
 CREATE TABLE customer_comments(
     comment_id VARCHAR(255) NOT NULL,
-    customer_id NUMBER,
-    product_id NUMBER NOT NULL,
+    customer_id NUMBER CHECK(customer_id >= 40000),
+    username CHAR(30),
+    product CHAR(50),
+    barcode CHAR(15),
+    post_date CHAR(14),
+    post_time CHAR(14),
     title CHAR(50),
-    score INT CHECK (score>=1 AND score<=5),
-    comment_text CHAR(2000), 
-    likes INT DEFAULT 0 CHECK((likes <= 1000000000) AND (likes >=0)),
-    endorsement CHAR(50),
-    CONSTRAINT pk_customer_comments PRIMARY KEY (comment_id),
+    score INT CHECK(score > 0),
+    comment_text CHAR(2000),
+    likes INT DEFAULT 0 CHECK(likes >= 0),
+    tag CHAR(50),
+    CONSTRAINT pk_customer_comments PRIMARY KEY(comment_id),
     CONSTRAINT fk_customer_comments_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id),
-    CONSTRAINT fk_customer_comments_products FOREIGN KEY(product_id) REFERENCES products(product_id)
+    CONSTRAINT check_customer_comments_score CHECK(6 >= score)
 );
 -- END "RATING"
 

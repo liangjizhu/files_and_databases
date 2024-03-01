@@ -414,6 +414,79 @@ DROP TABLE temp_table;
 -- 
 -- registered
 -- 
+-- CREATE SEQUENCE TO GENERATE registered_id automatically
+DROP SEQUENCE seq_registered_id;
+
+CREATE SEQUENCE seq_registered_id
+START WITH 50000
+INCREMENT BY 1
+MAXVALUE 60000
+NOCYCLE;
+
+-- we create a temporal table to filter the restrictions
+DROP TABLE temp_table;
+
+CREATE TABLE temp_table(
+    -- It needs at least one address, and at most one address per client and town
+    registered_id NUMBER CHECK(registered_id >= 50000),
+    customer_id NUMBER CHECK(customer_id >= 40000),
+    reg_username VARCHAR(30),
+    reg_password VARCHAR(40) ,
+    reg_date DATE,
+    reg_name VARCHAR(35),
+    reg_surname_1 VARCHAR(30),    
+    reg_surname_2 VARCHAR(30),
+    reg_email VARCHAR(100),
+    reg_phone_number INT,
+    contact_preference VARCHAR(30) DEFAULT 'sms',
+    loyalty_discount CHAR(5)
+);
+
+INSERT INTO temp_table(reg_username, reg_password, reg_date, reg_name, reg_surname_1, reg_surname_2, reg_email, reg_phone_number, contact_preference, loyalty_discount)
+SELECT DISTINCT
+    t.USERNAME,
+    t.USER_PASSW,
+    -- we change the data char to date
+    TO_DATE(t.REG_DATE, 'YYYY/MM/DD'),
+    t.CLIENT_NAME,
+    t.CLIENT_SURN1,
+    t.CLIENT_SURN2,
+    t.CLIENT_EMAIL,
+    t.CLIENT_MOBILE,
+    CASE
+        -- when there is phone the contact_preference is set to sms else to smail
+        WHEN c.customer_phone_number IS NOT NULL THEN 'sms'
+        ELSE 'email'
+    END AS contact_preference,
+    DISCOUNT
+FROM
+    fsdb.trolley t
+JOIN
+    customers c ON t.CLIENT_EMAIL = c.customer_email OR t.CLIENT_MOBILE = c.customer_phone_number
+WHERE
+    c.registered = 'Y' AND t.USERNAME IS NOT NULL AND t.USER_PASSW IS NOT NULL AND t.CLIENT_NAME IS NOT NULL AND t.REG_DATE IS NOT NULL AND t.CLIENT_SURN1 IS NOT NULL;
+
+-- we update by setting the first ocurrence of the customer id
+UPDATE temp_table tt
+SET customer_id = (
+    SELECT c.customer_id
+    FROM customers c
+    WHERE c.customer_username = tt.reg_username
+    AND ROWNUM = 1 -- Limits to the first result
+)
+WHERE EXISTS (
+    SELECT 1
+    FROM customers c
+    WHERE c.customer_username = tt.reg_username AND c.customer_username IS NOT NULL);
+
+-- we insert it to the main table
+INSERT INTO registered(registered_id, customer_id, reg_username, reg_password, reg_date, reg_name, reg_surname_1, reg_surname_2, contact_preference, loyalty_discount)
+SELECT
+    seq_registered_id.NEXTVAL, customer_id, reg_username, reg_password, reg_date, reg_name, reg_surname_1, reg_surname_2, contact_preference, loyalty_discount
+FROM TEMP_TABLE;
+
+-- we eliminate the unnecesary table
+DROP TABLE TEMP_TABLE;
 
 -- 
 -- non_registered
@@ -432,4 +505,78 @@ DROP TABLE temp_table;
 -- 
 -- customer_comments
 -- 
+DROP SEQUENCE seq_comment_id;
 
+CREATE SEQUENCE seq_comment_id
+START WITH 1000000
+INCREMENT BY 1
+MAXVALUE 9999999
+NOCYCLE;
+
+DROP TABLE temp_table_comments;
+
+CREATE TABLE temp_table_comments (
+    comment_id NUMBER CHECK(comment_id >= 1000000),
+    customer_id INT,
+    username CHAR(30),
+    product CHAR(50),
+    barcode CHAR(15),
+    post_date CHAR(14),
+    post_time CHAR(14),
+    title CHAR(50),
+    score INT,
+    comment_text CHAR(2000),
+    likes INT,
+    tag CHAR(50)
+);
+
+INSERT INTO temp_table_comments(username,
+product, barcode, post_date, post_time,title, score, likes, tag)
+SELECT DISTINCT
+    USERNAME,
+    PRODUCT,
+    BARCODE,
+    POST_DATE,
+    POST_TIME,
+    TITLE,
+    SCORE,
+    LIKES,
+    ENDORSED
+FROM fsdb.posts
+WHERE PRODUCT IS NOT NULL AND BARCODE IS NOT NULL;
+
+UPDATE temp_table_comments tt
+SET customer_id = (
+    SELECT c.customer_id
+    FROM customers c
+    WHERE c.customer_username = tt.username
+    AND ROWNUM = 1 -- Limits to the first result
+)
+WHERE EXISTS (
+    SELECT 1
+    FROM customers c
+    WHERE c.customer_username = tt.username AND c.customer_username IS NOT NULL);
+
+UPDATE temp_table_comments
+SET comment_id = (
+    seq_comment_id.NEXTVAL
+);
+
+INSERT INTO customer_comments(comment_id, customer_id,
+username, product, barcode, post_date, post_time,title,
+score, likes, tag)
+SELECT
+comment_id,
+customer_id,
+username,
+product,
+barcode,
+post_date,
+post_time,
+title,
+score,
+likes,
+tag
+FROM temp_table_comments;
+
+DROP TABLE temp_table_comments;

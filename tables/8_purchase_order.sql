@@ -11,7 +11,7 @@
 --     CONSTRAINT fk_purchase_order_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id)
 -- );"
 
-DROP TABLE temp_table2;
+DROP TABLE temp_table;
 
 DROP SEQUENCE seq_purchase;
 
@@ -21,20 +21,20 @@ INCREMENT BY 1
 MAXVALUE 60000
 NOCYCLE;
 
-CREATE TABLE temp_table3 (
+CREATE TABLE temp_table(
     order_id VARCHAR(20),
     bar_code NUMBER,
     customer_id INT,
     delivery_data VARCHAR(50)
 );
 
-INSERT INTO temp_table3(bar_code)
+INSERT INTO temp_table(bar_code)
 SELECT
     BARCODE,
 FROM fsdb.trolley
 GROUP BY BARCODE;
 
-UPDATE temp_table3
+UPDATE temp_table
 SET customer_id = (
     SELECT customer_id
     FROM temp_table2
@@ -44,7 +44,7 @@ SET customer_id = (
 );
 
 
-UPDATE temp_table2
+UPDATE temp_table
 SET customer_id = (
     seq_purchase.NEXTVAL
 );
