@@ -82,11 +82,11 @@ select distinct REG_DATE from fsdb.trolley;
 select distinct USER_PASSW from fsdb.trolley;
 select distinct CLIENT_MOBILE from fsdb.trolley;
 
--- registered
+-- registered inputs
 select distinct USERNAME, CLIENT_EMAIL, CLIENT_MOBILE 
 from fsdb.trolley WHERE USERNAME IS NOT NULL;
 
--- non registered
+-- non registered inputs
 select distinct USERNAME, CLIENT_EMAIL, CLIENT_MOBILE 
 from fsdb.trolley WHERE USERNAME IS NULL;
 
@@ -96,6 +96,7 @@ from fsdb.trolley WHERE USERNAME IS NULL;
 select distinct USERNAME, CLIENT_EMAIL from fsdb.trolley;
 select distinct USERNAME, CLIENT_MOBILE from fsdb.trolley;
 
+-- address inputs
 SELECT distinct DLIV_DATE,DLIV_TIME,DLIV_WAYTYPE,DLIV_WAYNAME,DLIV_GATE,DLIV_BLOCK, DLIV_STAIRW, DLIV_FLOOR, DLIV_DOOR, DLIV_ZIP, DLIV_TOWN, DLIV_COUNTRY 
 from fsdb.trolley
 where DLIV_WAYNAME IS NOT NULL AND DLIV_FLOOR IS NOT NULL AND DLIV_DOOR IS NOT NULL AND DLIV_COUNTRY IS NOT NULL AND DLIV_TOWN IS NOT NULL;
