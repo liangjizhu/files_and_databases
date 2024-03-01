@@ -16,10 +16,11 @@ CREATE TABLE temp_table(
     billing_id NUMBER,
     registered CHAR(1),
     customer_email VARCHAR(100),
-    customer_phone_number INT CHECK(customer_phone_number >= 100000000)
+    customer_phone_number INT CHECK(customer_phone_number >= 100000000),
+    username VARCHAR(30)
 );
 
-INSERT INTO temp_table (delivery_address, registered, customer_email, customer_phone_number)
+INSERT INTO temp_table (delivery_address, registered, customer_email, customer_phone_number, username)
 SELECT DISTINCT
     -- we concatenate the delivery address of the customer
     COALESCE(DLIV_WAYTYPE, '') || ' ' || COALESCE(DLIV_WAYNAME, '') || ' ' || COALESCE(DLIV_GATE, '') || ' ' ||
@@ -33,7 +34,8 @@ SELECT DISTINCT
         ELSE 'N'
     END AS registered,
     CLIENT_EMAIL,
-    CLIENT_MOBILE
+    CLIENT_MOBILE,
+    USERNAME
 FROM fsdb.trolley
 WHERE DLIV_WAYNAME IS NOT NULL AND DLIV_FLOOR IS NOT NULL AND DLIV_DOOR IS NOT NULL AND 
     DLIV_COUNTRY IS NOT NULL AND DLIV_TOWN IS NOT NULL AND (CLIENT_EMAIL IS NOT NULL OR CLIENT_MOBILE IS NOT NULL);
@@ -45,11 +47,10 @@ SET customer_id = (
 );
 
 -- we insert info to the main table
-INSERT INTO customers (customer_id, delivery_address, registered, customer_email, customer_phone_number)
+INSERT INTO customers (customer_id, delivery_address, registered, customer_email, customer_phone_number, customer_username)
 SELECT
-    customer_id, delivery_address, registered, customer_email, customer_phone_number
+    customer_id, delivery_address, registered, customer_email, customer_phone_number, username
 FROM temp_table;
 
 -- we eliminate the temporal table
 DROP TABLE temp_table;
-

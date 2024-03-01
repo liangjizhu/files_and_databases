@@ -124,6 +124,7 @@ CREATE TABLE customers(
     registered CHAR(1),
     customer_email VARCHAR(100),
     customer_phone_number INT CHECK(customer_phone_number >= 100000000),
+    customer_username VARCHAR(30),
     CONSTRAINT pk_customers PRIMARY KEY(customer_id),
     CONSTRAINT check_customer_phone_number CHECK(999999999 > customer_phone_number)
 );

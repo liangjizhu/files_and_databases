@@ -22,57 +22,60 @@ INCREMENT BY 1
 MAXVALUE 60000
 NOCYCLE;
 
-DROP TABLE  temp_table;
+DROP TABLE temp_table;
 
-CREATE TABLE  temp_table(
+CREATE TABLE temp_table(
     -- It needs at least one address, and at most one address per client and town
     registered_id NUMBER CHECK(registered_id >= 50000),
     customer_id NUMBER CHECK(customer_id >= 40000),
     reg_username VARCHAR(30),
     reg_password VARCHAR(40) ,
-    reg_date DATE ,
-    reg_name VARCHAR(30) ,
-    reg_surname_1 VARCHAR(30) ,    
+    reg_date DATE,
+    reg_name VARCHAR(35),
+    reg_surname_1 VARCHAR(30),    
     reg_surname_2 VARCHAR(30),
-    contact_preference VARCHAR(30) DEFAULT 'sms' ,
+    reg_email VARCHAR(100),
+    reg_phone_number INT,
+    contact_preference VARCHAR(30) DEFAULT 'sms',
     loyalty_discount CHAR(1)
 );
 
-INSERT INTO  temp_table(reg_username, reg_password, reg_date, reg_name, reg_surname_1, reg_surname_2, contact_preference)
+INSERT INTO temp_table(reg_username, reg_password, reg_date, reg_name, reg_surname_1, reg_surname_2, reg_email, reg_phone_number, contact_preference)
 SELECT DISTINCT
     t.USERNAME,
     t.USER_PASSW,
-    t.REG_DATE,
+    TO_DATE(t.REG_DATE, 'YYYY/MM/DD'),
     t.CLIENT_NAME,
     t.CLIENT_SURN1,
     t.CLIENT_SURN2,
+    t.CLIENT_EMAIL,
+    t.CLIENT_MOBILE,
     CASE
-        WHEN 
-FROM 
+        WHEN c.customer_phone_number IS NOT NULL THEN 'sms'
+        ELSE 'email'
+    END AS contact_preference
+FROM
     fsdb.trolley t
-JOIN 
+JOIN
     customers c ON t.CLIENT_EMAIL = c.customer_email OR t.CLIENT_MOBILE = c.customer_phone_number
-WHERE 
-    c.registered = 'Y' AND t.username IS NOT NULL;
+WHERE
+    c.registered = 'Y' AND t.USERNAME IS NOT NULL AND t.USER_PASSW IS NOT NULL AND t.CLIENT_NAME IS NOT NULL AND t.REG_DATE IS NOT NULL AND t.CLIENT_SURN1 IS NOT NULL;
+
+UPDATE temp_table
+SET customer_id = (
+    SELECT customer_id
+    FROM customers
+    JOIN
+    customers c ON t.CLIENT_EMAIL = c.customer_email OR t.CLIENT_MOBILE = c.customer_phone_number
+    WHERE customer_email = temp_table.reg_email
+);
 
 INSERT INTO registered(registered_id, customer_id, reg_username, reg_password, reg_date, reg_name, reg_surname_1, reg_surname_2, contact_preference, loyalty_discount)
 SELECT
     seq_registered_id.NEXTVAL,
-    t.customer_id,  -- This assumes 'customer_id' is the correct column in 'fsdb.trolley'
-    t.username,  -- Replace with the actual username column from 'fsdb.trolley'
-    t.password,  -- Replace with the actual password column from 'fsdb.trolley'
-    CURRENT_DATE,  -- Assuming you want to use the current date as the registration date
-    t.name,  -- Replace with the actual name column from 'fsdb.trolley'
-    t.surname_1,  -- Replace with the actual surname_1 column from 'fsdb.trolley'
-    t.surname_2,  -- Replace with the actual surname_2 column from 'fsdb.trolley'
-    t.contact_pref,  -- Replace with the actual contact preference column from 'fsdb.trolley'
-    t.loyalty_disc  -- Replace with the actual loyalty discount column from 'fsdb.trolley'
-FROM 
-    fsdb.trolley t
-JOIN 
-    customers c ON t.customer_id = c.customer_id  -- Adjust this condition to match the actual columns
-WHERE 
-    c.registered = 'Y';
+
+FROM TEMP_TABLE tt
+JOIN customers c ON tt.USERNAME = c.USERNAME;
 
 
 
@@ -107,5 +110,5 @@ WHERE
 -- from fsdb.trolley
 -- where PAYMENT_TYPE IS  AND DLIV_WAYNAME IS  AND DLIV_FLOOR IS  AND DLIV_DOOR IS  AND DLIV_COUNTRY IS  AND DLIV_TOWN IS ;
 
--- select distinct text from fsdb.posts;
+select distinct reg_date from fsdb.trolley;
 desc fsdb.trolley;
