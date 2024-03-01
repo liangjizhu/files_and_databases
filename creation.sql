@@ -3,7 +3,6 @@
 -- We try to insert the elements in the tables using the commands.sql
 -- The sequences we need are in id_generator.sql
 DROP TABLE customer_comments;
-DROP TABLE customer_feedbacks;
 DROP TABLE non_registered;
 DROP TABLE registered;
 DROP TABLE orders_item;

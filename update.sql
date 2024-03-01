@@ -399,5 +399,37 @@ FROM temp_table;
 -- we eliminate the temporal table
 DROP TABLE temp_table;
 
+-- 
+-- purchase_order
+-- 
 
+-- 
+-- delivery
+-- 
+
+-- 
+-- orders_item
+-- 
+
+-- 
+-- registered
+-- 
+
+-- 
+-- non_registered
+-- 
+
+-- 
+-- billing_data
+-- 
+
+
+-- 
+-- credit_card_data
+-- 
+
+
+-- 
+-- customer_comments
+-- 
 
