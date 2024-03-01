@@ -94,20 +94,25 @@ CREATE TABLE replacement_order(
 );
 
 CREATE TABLE supplier(
+    -- creating a supplier_barcode_id because there are more suppliers for one product (bar_code)
+    supplier_barcode_id NUMBER CHECK(supplier_barcode_id >= 30000),
     -- If supplier is deleted, delete all offers that are not fullfiled yet
     -- Set supplier to null in the fullfiled ones
     cif VARCHAR(10) NOT NULL,
     bar_code VARCHAR(15) NOT NULL,
-    provider_name VARCHAR(50) NOT NULL,
-    full_name VARCHAR(100) NOT NULL,
-    supplier_email VARCHAR(100) NOT NULL,
+    supplier_name VARCHAR(90) NOT NULL,
+    full_name VARCHAR(120) NOT NULL,
+    supplier_email VARCHAR(120) NOT NULL,
     supplier_phone_number INT CHECK(supplier_phone_number >= 100000000),
-    comm_address VARCHAR(100) NOT NULL,
-    offer INT CHECK(offer >= 0) NOT NULL,
-    fulfilled_orders VARCHAR(15),
-    CONSTRAINT pk_supplier PRIMARY KEY(cif),
+    comm_address VARCHAR(120) NOT NULL,
+    supplier_country CHAR(45) NOT NULL,
+    supplier_bankacc CHAR(30) NOT NULL,
+    offer FLOAT CHECK(offer > 0),
+    fulfilled_orders NUMBER CHECK(fulfilled_orders >= 0),
+    CONSTRAINT pk_supplier PRIMARY KEY(supplier_barcode_id),
+    CONSTRAINT check_supplier_phone_number CHECK(999999999 > supplier_phone_number),
     CONSTRAINT fk_supplier_replacement_order FOREIGN KEY(bar_code) REFERENCES p_reference(bar_code),
-    CONSTRAINT check_supplier_phone_number CHECK(999999999 > supplier_phone_number)
+    CONSTRAINT fk_fullfilled_orders FOREIGN KEY(fulfilled_orders) REFERENCES replacement_order(replacement_order_id)
 );
 
 -- END "MY SHOP"
@@ -255,4 +260,4 @@ CREATE TABLE customer_comments(
 
 -- clear scr;
 
-SELECT table_name FROM all_tables WHERE owner = 'FSDB237';
+SELECT table_name FROM all_tables WHERE owner = 'FSDB235';
