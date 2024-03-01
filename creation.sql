@@ -169,11 +169,11 @@ CREATE TABLE registered(
     reg_username VARCHAR(30) NOT NULL,
     reg_password VARCHAR(40) NOT NULL,
     reg_date DATE NOT NULL,
-    reg_name VARCHAR(30) NOT NULL,
+    reg_name VARCHAR(35) NOT NULL,
     reg_surname_1 VARCHAR(30) NOT NULL,    
     reg_surname_2 VARCHAR(30),
     contact_preference VARCHAR(30) DEFAULT 'sms' NOT NULL,
-    loyalty_discount CHAR(1),
+    loyalty_discount CHAR(5),
     CONSTRAINT pk_registered PRIMARY KEY(registered_id),
     CONSTRAINT fk_registered_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id)
 );
@@ -220,7 +220,7 @@ CREATE TABLE customer_comments(
     title CHAR(50),
     score INT CHECK (score>=1 AND score<=5),
     comment_text CHAR(2000), 
-    likes INT DEFAULT 0 CHECK(likes <= 1000000000) AND (likes >=0),
+    likes INT DEFAULT 0 CHECK((likes <= 1000000000) AND (likes >=0)),
     endorsement CHAR(50),
     CONSTRAINT pk_customer_comments PRIMARY KEY (comment_id),
     CONSTRAINT fk_customer_comments_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id),
