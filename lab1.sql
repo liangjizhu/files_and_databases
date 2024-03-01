@@ -70,7 +70,7 @@ CREATE TABLE p_reference(
 );
 
 CREATE TABLE replacement_order(
-    replacement_order_id VARCHAR(15) NOT NULL,
+    replacement_order_id NUMBER CHECK(replacement_order_id >= 20000) NOT NULL,
     bar_code VARCHAR(15) NOT NULL,
     -- If for some reason there is no supplier for the reference (???),
     -- the order will remain a draft.
@@ -78,33 +78,35 @@ CREATE TABLE replacement_order(
     -- (If tie, choose FASTEST PROVIDER)(IF another tie, CHOOSE fewest orders) (ELSE, choose random)
     supplier VARCHAR(35),
     -- The requested units have to be max_stock - current_stock
-    request_amount NUMBER CHECK(request_amount > 0) NOT NULL,
+    request_amount NUMBER CHECK(request_amount > 0),
     -- This has to be updated once the delivery has arrived
-    request_date DATE NOT NULL,
-    delivery_date DATE NOT NULL,
+    request_date DATE,
+    delivery_date DATE,
     -- orders whose state == PLACED can NOT be updated (unless to change status or delivery date) or deleted
+    -- CAN BE NULL BECAUSE IN THE DATABASE PROVIDED THERE IS NO RECEIVED ORDER DATE NEITHER STATE
     rorder_state VARCHAR(15),
-    received_date DATE NOT NULL,
-    payment VARCHAR(20),
+    received_date DATE,
+    -- payments refers to the supplier's bankaccount
+    payment VARCHAR(30) NOT NULL,
     CONSTRAINT pk_replacement_order PRIMARY KEY(replacement_order_id),
     CONSTRAINT fk_replacement_order_p_reference FOREIGN KEY(bar_code) REFERENCES p_reference(bar_code),
-    CONSTRAINT check_rorder_state CHECK(rorder_state IN ('fulfilled', 'draft', 'placed'))
+    CONSTRAINT check_rorder_state CHECK(rorder_state IN ('fulfilled', 'draft', 'placed', NULL))
 );
 
 CREATE TABLE supplier(
     -- If supplier is deleted, delete all offers that are not fullfiled yet
     -- Set supplier to null in the fullfiled ones
     cif VARCHAR(10) NOT NULL,
+    bar_code VARCHAR(15) NOT NULL,
     provider_name VARCHAR(50) NOT NULL,
     full_name VARCHAR(100) NOT NULL,
     supplier_email VARCHAR(100) NOT NULL,
     supplier_phone_number INT CHECK(supplier_phone_number >= 100000000),
-    comm_address VARCHAR(120) NOT NULL,
-    provider_country CHAR(45) NOT NULL,
-    provider_bankacc CHAR(30) NOT NULL,
-    offer INT CHECK(offer >= 0),
+    comm_address VARCHAR(100) NOT NULL,
+    offer INT CHECK(offer >= 0) NOT NULL,
     fulfilled_orders VARCHAR(15),
     CONSTRAINT pk_supplier PRIMARY KEY(cif),
+    CONSTRAINT fk_supplier_replacement_order FOREIGN KEY(bar_code) REFERENCES p_reference(bar_code),
     CONSTRAINT check_supplier_phone_number CHECK(999999999 > supplier_phone_number)
 );
 
