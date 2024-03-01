@@ -78,7 +78,7 @@ CREATE TABLE replacement_order(
     -- (If tie, choose FASTEST PROVIDER)(IF another tie, CHOOSE fewest orders) (ELSE, choose random)
     supplier VARCHAR(35),
     -- The requested units have to be max_stock - current_stock
-    request_amount NUMBER CHECK(request_amount > 0),
+    request_amount NUMBER CHECK(request_amount > 0) NOT NULL,
     -- This has to be updated once the delivery has arrived
     request_date DATE,
     delivery_date DATE,

@@ -46,3 +46,4 @@ FROM temp_table;
 DROP TABLE temp_table;
 
 -- select * from p_reference;
+select min_stock, max_stock, current_stock from p_reference;
