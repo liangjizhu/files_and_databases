@@ -163,7 +163,7 @@ CREATE TABLE orders_item(
 
 CREATE TABLE registered(
     -- It needs at least one address, and at most one address per client and town
-    registered_id NUMBER CHECK(registered_id >= 100000),
+    registered_id NUMBER CHECK(registered_id >= 50000) NOT NULL,
     customer_id NUMBER CHECK(customer_id >= 40000) NOT NULL,
     reg_username VARCHAR(30) NOT NULL,
     reg_password VARCHAR(40) NOT NULL,

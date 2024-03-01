@@ -17,16 +17,16 @@
 DROP SEQUENCE seq_registered_id;
 
 CREATE SEQUENCE seq_registered_id
-START WITH 100000
+START WITH 50000
 INCREMENT BY 1
-MAXVALUE 999999
+MAXVALUE 60000
 NOCYCLE;
 
-DROP TABLE  temp_table_1;
+DROP TABLE  temp_table;
 
-CREATE TABLE  temp_table_1(
+CREATE TABLE  temp_table(
     -- It needs at least one address, and at most one address per client and town
-    registered_id NUMBER CHECK(registered_id >= 100000),
+    registered_id NUMBER CHECK(registered_id >= 50000),
     customer_id NUMBER CHECK(customer_id >= 40000),
     reg_username VARCHAR(30),
     reg_password VARCHAR(40) ,
@@ -38,7 +38,7 @@ CREATE TABLE  temp_table_1(
     loyalty_discount CHAR(1)
 );
 
-INSERT INTO  temp_table_1(reg_username, reg_password, reg_date, reg_name, reg_surname_1, reg_surname_2, contact_preference)
+INSERT INTO  temp_table(reg_username, reg_password, reg_date, reg_name, reg_surname_1, reg_surname_2, contact_preference)
 SELECT DISTINCT
     t.USERNAME,
     t.USER_PASSW,
