@@ -21,23 +21,23 @@ INCREMENT BY 1
 MAXVALUE 60000
 NOCYCLE;
 
-CREATE TABLE temp_table2 (
+CREATE TABLE temp_table3 (
     order_id VARCHAR(20),
     bar_code NUMBER,
     customer_id INT,
     delivery_data VARCHAR(50)
 );
 
-INSERT INTO temp_table2(bar_code)
+INSERT INTO temp_table3(bar_code)
 SELECT
     BARCODE,
 FROM fsdb.trolley
 GROUP BY BARCODE;
 
-UPDATE temp_table2
+UPDATE temp_table3
 SET customer_id = (
     SELECT customer_id
-    FROM customer
+    FROM temp_table2
     WHERE customer_email = 
     SELECT CLIENT_EMAIL 
     FROM fsdb.trolley

@@ -212,29 +212,18 @@ CREATE TABLE credit_card_data(
 -- END "BUYING"
 
 -- START "RATING"
-CREATE TABLE customer_feedbacks(
-    feedback_id VARCHAR(30) NOT NULL,
-    customer_id NUMBER CHECK(customer_id >= 40000) NOT NULL,
-    product_id NUMBER CHECK(product_id >= 1) NOT NULL,
-    bar_code VARCHAR(15),
-    opinion VARCHAR(1000),
-    rating INT CHECK(rating > 0),
-    customer_comment VARCHAR(1000),
-    CONSTRAINT pk_customer_feedbacks PRIMARY KEY(feedback_id),
-    CONSTRAINT fk_customer_feedbacks_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id),
-    CONSTRAINT check_customer_feedbacks_rating CHECK(5 >= rating)
-);
-
 CREATE TABLE customer_comments(
     comment_id VARCHAR(255) NOT NULL,
-    customer_id NUMBER CHECK(customer_id >= 40000) NOT NULL,
-    score INT CHECK(score > 0),
-    text VARCHAR(1000),
-    likes INT DEFAULT 0 CHECK(likes >= 0),
-    tag VARCHAR(40),
-    CONSTRAINT pk_customer_comments PRIMARY KEY(comment_id),
+    customer_id NUMBER,
+    product_id NUMBER NOT NULL,
+    title CHAR(50),
+    score INT CHECK (score>=1 AND score<=5),
+    comment_text CHAR(2000), 
+    likes INT DEFAULT 0 CHECK(likes <= 1000000000) AND (likes >=0),
+    endorsement CHAR(50),
+    CONSTRAINT pk_customer_comments PRIMARY KEY (comment_id),
     CONSTRAINT fk_customer_comments_customers FOREIGN KEY(customer_id) REFERENCES customers(customer_id),
-    CONSTRAINT check_customer_comments_score CHECK(6 >= score)
+    CONSTRAINT fk_customer_comments_products FOREIGN KEY(product_id) REFERENCES products(product_id)
 );
 -- END "RATING"
 

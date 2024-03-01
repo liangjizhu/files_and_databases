@@ -8,7 +8,7 @@ MAXVALUE 50000
 NOCYCLE;
 
 -- we create a temporal table to avoid the restriction of the primary that cannot be NULL 
-DROP TABLE temp_table;
+DROP TABLE temp_table2;
 
 CREATE TABLE temp_table2(
     customer_id NUMBER CHECK(customer_id >= 40000),
@@ -39,16 +39,16 @@ WHERE DLIV_WAYNAME IS NOT NULL AND DLIV_FLOOR IS NOT NULL AND DLIV_DOOR IS NOT N
     DLIV_COUNTRY IS NOT NULL AND DLIV_TOWN IS NOT NULL AND (CLIENT_EMAIL IS NOT NULL OR CLIENT_MOBILE IS NOT NULL);
 
 -- we generate the customer id
-UPDATE temp_table
+UPDATE temp_table2
 SET customer_id = (
     seq_customer_id.NEXTVAL
 );
 
 -- we insert info to the main table
 INSERT INTO customers (customer_id, delivery_address, registered, customer_email, customer_phone_number)
-SELECT
+SELECT DISTINCT
     customer_id, delivery_address, registered, customer_email, customer_phone_number
-FROM temp_table;
+FROM temp_table2;
 
 -- we eliminate the temporal table
 DROP TABLE temp_table;
