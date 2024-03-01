@@ -120,40 +120,13 @@ CREATE TABLE supplier(
 -- START "BUYING"
 CREATE TABLE customers(
     customer_id NUMBER CHECK(customer_id >= 40000) NOT NULL,
---     username CHAR(30),
---     reg_date CHAR(14),
---     reg_time CHAR(14),
---     user_password CHAR(15),
---     customer_name CHAR(35) NOT NULL,
---     customer_surname1 CHAR(30) NOT NULL,
---     customer_surname2 CHAR(30),
---     customer_email VARCHAR(60),
---     customer_phone_number CHAR(9),
     delivery_address VARCHAR(100) NOT NULL,
-    billing_data VARCHAR(20) NOT NULL,
+    billing_id,
     registered CHAR(1),
     customer_email VARCHAR(100) NOT NULL,
     customer_phone_number INT CHECK(customer_phone_number >= 100000000),
     CONSTRAINT pk_customers PRIMARY KEY(customer_id),
     CONSTRAINT check_customer_phone_number CHECK(999999999 > customer_phone_number)
-);
-
-CREATE TABLE address(
-    address_id INT CHECK (address_id >=50000) NOT NULL,
-    add_type VARCHAR(20) NOT NULL,
-    add_name VARCHAR(100) NOT NULL,
-    gateway_num INT,
-    block_num INT,
-    stairs_id CHAR(1),
-    floor_num INT,
-    door_num INT,
-    zip_code INT NOT NULL,
-    town_name VARCHAR(100) NOT NULL,
-    country VARCHAR(100) NOT NULL,
-    CONSTRAINT pk_address PRIMARY KEY (address_id),
-    CONSTRAINT fk_address_customers FOREIGN KEY (address_id) REFERENCES customers(customer_id),
-    CONSTRAINT check_zip_code CHECK (zip_code >= 10000),
-    CONSTRAINT check_valid_ints CHECK (gateway_num > 0 AND block_num > 0 AND door_num > 0)
 );
 
 CREATE TABLE purchase_order(
