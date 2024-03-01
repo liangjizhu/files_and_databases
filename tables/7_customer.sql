@@ -18,9 +18,9 @@ INCREMENT BY 1
 MAXVALUE 50000
 NOCYCLE;
 
-DROP TABLE temp_table;
+DROP TABLE temp_table2;
 
-CREATE TABLE temp_table(
+CREATE TABLE temp_table2(
     customer_id NUMBER CHECK(customer_id >= 40000),
     delivery_address VARCHAR(1000) NOT NULL,
     billing_id NUMBER,
@@ -29,7 +29,7 @@ CREATE TABLE temp_table(
     customer_phone_number INT CHECK(customer_phone_number >= 100000000)
 );
 
-INSERT INTO temp_table (delivery_address, registered, customer_email, customer_phone_number)
+INSERT INTO temp_table2 (delivery_address, registered, customer_email, customer_phone_number)
 SELECT DISTINCT
     COALESCE(DLIV_WAYTYPE, '') || ' ' || COALESCE(DLIV_WAYNAME, '') || ' ' || COALESCE(DLIV_GATE, '') || ' ' ||
     COALESCE(DLIV_BLOCK, '') || ' ' || COALESCE(DLIV_STAIRW, '') || ' ' || COALESCE(DLIV_FLOOR, '') || ' ' ||
@@ -46,12 +46,12 @@ WHERE PAYMENT_TYPE IS NOT NULL AND DLIV_WAYNAME IS NOT NULL AND DLIV_FLOOR IS NO
     DLIV_COUNTRY IS NOT NULL AND DLIV_TOWN IS NOT NULL AND (CLIENT_EMAIL IS NOT NULL OR CLIENT_MOBILE IS NOT NULL);
 
 
-UPDATE temp_table
+UPDATE temp_table2
 SET customer_id = (
     seq_customer_id.NEXTVAL
 );
 
-DROP TABLE temp_table;
+DROP TABLE temp_table2;
 
 SELECT COUNT(DISTINCT CLIENT_NAME) FROM fsdb.trolley;
 SELECT COUNT(DISTINCT USERNAME) FROM fsdb.trolley;
